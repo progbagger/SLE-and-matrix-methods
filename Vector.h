@@ -3,7 +3,7 @@
 
 using namespace std;
 
-class Vector // êëàññ äëÿ ðàáîòû ñ âåêòîðàìè
+class Vector // ÐºÐ»Ð°ÑÑ Ð´Ð»Ñ Ñ€Ð°Ð±Ð¾Ñ‚Ñ‹ Ñ Ð²ÐµÐºÑ‚Ð¾Ñ€Ð°Ð¼Ð¸
 {
     double* V;
     int size;
@@ -47,7 +47,7 @@ public:
     friend Vector operator * (const double&, const Vector&);
     friend Vector operator * (const Vector&, const double&);
 
-    // îïåðàòîðû ââîäà/âûâîäà âåêòîðà
+    // Ð¾Ð¿ÐµÑ€Ð°Ñ‚Ð¾Ñ€Ñ‹ Ð²Ð²Ð¾Ð´Ð°/Ð²Ñ‹Ð²Ð¾Ð´Ð° Ð²ÐµÐºÑ‚Ð¾Ñ€Ð°
     friend istream& operator >> (std::istream&, Vector&);
     friend ostream& operator << (std::ostream&, const Vector&);
 };
