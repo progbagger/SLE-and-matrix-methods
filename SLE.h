@@ -5,7 +5,7 @@
 
 using namespace std;
 
-class SLE // класс для работы с системами линейных алгебраических уравнений
+class SLE // class for SLE's
 {
 private:
 
@@ -30,18 +30,18 @@ public:
     Matrix& getM();
     int getSize() const;
 
-    // прямые методы
+    // direct methods
     Vector Gauss();
     Vector HR();
 
-    // итерационные методы
+    // iterational methods
     void iView();
     void HZ(const double&, const Vector&);
     void Jacobi(const double&, const Vector&);
     void SGrd(const double&, const Vector&);
     void Rchd3(const double&, const Vector&, const double&, const double&);
 
-    // операторы ввода/вывода СЛАУ
+    // input/output SLE
     friend istream& operator >> (istream&, SLE&);
     friend ostream& operator << (ostream&, const SLE&);
 };
