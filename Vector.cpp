@@ -33,7 +33,7 @@ Vector::Vector(const int& s, double* m) {
         V[i] = m[i];
 }
 
-// ниже приведены стандартные операторы для работы с векторами
+// РЅРёР¶Рµ РїСЂРёРІРµРґРµРЅС‹ СЃС‚Р°РЅРґР°СЂС‚РЅС‹Рµ РѕРїРµСЂР°С‚РѕСЂС‹ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РІРµРєС‚РѕСЂР°РјРё
 double Vector::operator *(const Vector& that) {
     double result = 0;
     for (int i = 0; i < size; i++)
@@ -41,7 +41,7 @@ double Vector::operator *(const Vector& that) {
     return result;
 }
 
-// коммутативность операторов
+// РєРѕРјРјСѓС‚Р°С‚РёРІРЅРѕСЃС‚СЊ РѕРїРµСЂР°С‚РѕСЂРѕРІ
 Vector operator *(const double& a, const Vector& that) {
     Vector result(that.getSize());
     for (int i = 0; i < result.getSize(); i++)
@@ -88,7 +88,7 @@ bool Vector::operator ! () const {
     return result;
 }
 
-// норма вектора
+// РЅРѕСЂРјР° РІРµРєС‚РѕСЂР°
 double Vector::infNorm() const{
     double result = std::abs(V[0]);
     for (int i = 1; i < size; i++)
@@ -97,7 +97,7 @@ double Vector::infNorm() const{
     return result;
 }
 
-// операторы ввода и вывода вектора
+// РѕРїРµСЂР°С‚РѕСЂС‹ РІРІРѕРґР° Рё РІС‹РІРѕРґР° РІРµРєС‚РѕСЂР°
 istream& operator >> (istream& in, Vector& that) {
     for (int i = 0; i < that.getSize(); i++)
         in >> that[i];
