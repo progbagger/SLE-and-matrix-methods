@@ -16,7 +16,7 @@ Matrix& Matrix::operator = (const Matrix& that) {
 }
 
 int Matrix::getSize() const { return size; }
-double*& Matrix::operator [] (const int& r) { return M[r]; } // ñ èçìåíåíìåè
+double*& Matrix::operator [] (const int& r) { return M[r]; } // с изменением
 double*& Matrix::get(const int& r) const { return M[r]; }
 
 
@@ -33,30 +33,30 @@ Matrix::Matrix(const int& s) {
                 M[i][j] = 0;
 }
 
-Matrix Matrix::H() { // for HR
+Matrix Matrix::H() { // нахождение матрицы отражений
     Matrix result(size);
     Matrix R = *this;
     for (int i = 0; i < size - 1; i++) {
         double* t = new double[size - i];
         for (int j = 0; j < size - i; j++)
             t[j] = R.get(j + i)[i];
-        Vector b(this->size - i, t); // n - i matrix
+        Vector b(this->size - i, t); // вектор b - первый столбец нашей матрицы размера n - i, где i - итерация главного цикла for
         for (int j = 0; j < size - i; j++)
             if (j == 0)
                 t[j] = 1;
             else
                 t[j] = 0;
-        Vector c(size - i, t);
+        Vector c(size - i, t); // вектор c - единично-координатный вектор
         delete[] t;
         Vector temp = b - (b.abs() * c);
-        Vector w = (temp / sqrt(2 * (b * temp))); // for w*w^(-1)
+        Vector w = (temp / sqrt(2 * (b * temp))); // ключевой вектор, из которого строится матрица отражений для каждой итерации
         Matrix Omega(size - i);
         for (int j = 0; j < size - i; j++)
             for (int k = 0; k < size - i; k++)
                 Omega[j][k] = w.get(j) * w.get(k);
         Matrix E(size - i);
-        Matrix EU = E - (2 * Omega);
-        Matrix U(size);
+        Matrix EU = E - (2 * Omega); // матрица отражений для каждой итерации
+        Matrix U(size); // обобщённая матрица отражений (размера n)
         for (int j = 0; j < size; j++)
             for (int k = 0; k < size; k++)
                 if (j >= i && k >= i) {
@@ -67,12 +67,13 @@ Matrix Matrix::H() { // for HR
                     else
                         U[j][k] = 0;
                 }
-        result = U * result;
+        result = U * result; // формирование матрицы отражений в каждой итерации цикла
         R = U * R;
     }
     return result;
 }
 
+// стандартные операторы для работы с матрицами
 Matrix Matrix::operator + (const Matrix& that) {
     Matrix result(size);
     for (int i = 0; i < result.size; i++)
@@ -126,7 +127,7 @@ Matrix Matrix::operator !()
     return result;
 }
 
-void Matrix::swap(const int& i1, const int& i2) {
+void Matrix::swap(const int& i1, const int& i2) { // смена строк местами
     for (int i = 0; i < size; i++) {
         double temp = M[i1][i];
         M[i1][i] = M[i2][i];
@@ -134,6 +135,7 @@ void Matrix::swap(const int& i1, const int& i2) {
     }
 }
 
+// вычисление определителя матрицы
 double Matrix::det() const{
     Matrix T = *this;
     double result = 1;
@@ -156,11 +158,12 @@ double Matrix::det() const{
     return result;
 }
 
+// нахождение обратной матрицы методом Жордана-Гаусса
 Matrix Matrix::reflect()
 {
     Matrix E(this->size);
     Matrix T = *this;
-    // ïðÿìîé õîä ìåòîäà Ãàóññà
+    // прямой ход метода Гаусса
     for (int i = 0; i < T.size - 1; i++) {
         if (!T.M[i][i])
             for (int j = i + 1; j < T.size; j++) {
@@ -178,6 +181,7 @@ Matrix Matrix::reflect()
             }
         }
     }
+    // обратный ход метода Гаусса
     for (int i = T.size - 1; i > 0; i--) {
         for (int j = i - 1; j >= 0; j--) {
             double temp = T.M[j][i] / T.M[i][i];
@@ -227,6 +231,7 @@ Matrix Matrix::upperTriangle()
     return result;
 }
 
+// операторы ввода/вывода матрицы
 istream& operator >> (istream& in, Matrix& that)
 {
     for (int i = 0; i < that.getSize(); i++)
