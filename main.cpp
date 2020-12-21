@@ -8,7 +8,7 @@ ofstream fout("output.txt");
 
 int main()
 {
-    fout << fixed << setprecision(8); // установка точности на 8 знаков после запятой
+    fout << fixed << setprecision(8); // СѓСЃС‚Р°РЅРѕРІРєР° С‚РѕС‡РЅРѕСЃС‚Рё РЅР° 8 Р·РЅР°РєРѕРІ РїРѕСЃР»Рµ Р·Р°РїСЏС‚РѕР№
     int n;
     fin >> n;
     double e, a, b;
