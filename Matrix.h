@@ -4,7 +4,7 @@
 
 using namespace std;
 
-class Matrix // класс для работы с квадратными матрицами
+class Matrix // class for matrix
 {
     double** M;
     int size;
@@ -36,33 +36,33 @@ public:
     Matrix& operator = (const Matrix&);
 
     int getSize() const;
-    double*& operator [] (const int&); // с возможностью изменения
+    double*& operator [] (const int&); // change possibility
     double*& get(const int&) const;
 
-    // стандартные операторы для работы с матрицами
+    // standart operators
     Matrix operator + (const Matrix&);
     Matrix operator - (const Matrix&);
     Matrix operator * (const Matrix&);
     Matrix operator * (const double&);
     Matrix operator !();
 
-    void swap(const int&, const int&); // смена строк местами
-    double det() const; // вычисление определителя матрицы
+    void swap(const int&, const int&);
+    double det() const; // determinant
 
-    Matrix reflect(); // нахождение обратной матрицы методом Жордана-Гаусса
-    Matrix H(); // матрица отражений
-    Matrix diag(); // диагональная матрица
-    Matrix lowerTriangle(); // нижняя треугольная матрица
-    Matrix upperTriangle(); // верхняя треугольная матрица
+    Matrix reflect(); // returns A^(-1)
+    Matrix H(); // returns reflected matrix for HR method
+    Matrix diag(); // returns diag(A)
+    Matrix lowerTriangle(); // returns L(A)
+    Matrix upperTriangle(); // returns U(A)
 
-    // нахождение собственных чисел и собственных векторов
+    // eigenvalues and eigenvectors
     void QR();
 
-    // операторы ввода/вывода матрицы
+    // input/output for matrix
     friend istream& operator >> (istream&, Matrix&);
     friend ostream& operator << (ostream&, const Matrix&);
 
-    // коммутативные операторы
-    friend Matrix operator * (const double&, const Matrix&); // умножение матрицы на константу
-    friend Vector operator * (const Matrix&, const Vector&); // умножение матрицы на вектор
+    // commutative operator
+    friend Matrix operator * (const double&, const Matrix&);
+    friend Vector operator * (const Matrix&, const Vector&);
 };
