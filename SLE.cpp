@@ -16,13 +16,14 @@ SLE& SLE::operator = (const SLE& that) {
     return *this;
 }
 
-// ãåòòåðû
+// геттеры
 Vector SLE::c_getb() const { return b; }
 Vector& SLE::getb() { return b; }
 Matrix SLE::c_getM() const { return M; }
 Matrix& SLE::getM() { return M; }
 int SLE::getSize() const { return size; }
 
+// операторы ввода/вывода СЛАУ
 istream& operator >> (istream& in, SLE& that)
 {
     for (int i = 0; i < that.getSize(); i++)
@@ -64,12 +65,14 @@ void SLE::iView()
     }
 }
 
-// direct methods
+/* ПРЯМЫЕ МЕТОДЫ */
 
+// решение системы методом Гаусса
 Vector SLE::Gauss()
 {
-    Matrix Mt = M; Vector bt = b;
+    Matrix Mt = M; Vector bt = b; // чтобы не испортить исходные
     Vector result(size);
+    // прямой ход
     for (int i = 0; i < size - 1; i++)
     {
         if (!Mt[i][i])
@@ -92,6 +95,7 @@ Vector SLE::Gauss()
             bt[j] -= bt[i] * temp;
         }
     }
+    // нахождение иксов
     for (int i = size - 1; i >= 0; i--)
     {
         result[i] = bt[i];
@@ -102,14 +106,16 @@ Vector SLE::Gauss()
     return result;
 }
 
-Vector SLE::HR()
+Vector SLE::HR() // решение СЛАУ методом отражений
 {
-    Matrix MM = M; Vector bb = b;
+    Matrix MM = M; Vector bb = b; // делаем доп. систему чтобы не испортить исходную
     Vector result(size);
     for (int i = 0; i < result.getSize(); i++)
         result[i] = 0;
     Matrix H = MM.H();
+    // преобразовываем систему, умножая матрицу системы и вектор свободных членов на матрицу отражений слева
     MM = H * MM; bb = H * bb;
+    // поиск "иксов"
     for (int i = this->size - 1; i >= 0; i--)
     {
         result[i] = bb[i];
@@ -120,18 +126,20 @@ Vector SLE::HR()
     return result;
 }
 
-// iterational methods
+/* ИТЕРАЦИОННЫЕ МЕТОДЫ */
 
+// Метод Гаусса-Зейделя
 void SLE::HZ(const double& e, const Vector& ee)
 {
+    //e - точность вычислений
     Vector result(size);
     SLE t = *this;
     Matrix D = t.M.diag(), L = -1 * t.M.lowerTriangle();
-    Matrix H = (D - L).reflect(); (D - L)^-1
-    Vector x0 = ee;
-    result = x0 - H * ((getM() * x0) - getb());
+    Matrix H = (D - L).reflect(); // вычисление (D - L)^-1
+    Vector x0 = ee; // начальное приближение, равное вектору свободных членов в преобразованной системе
+    result = x0 - H * ((getM() * x0) - getb()); // первая итерация
     int m = 1;
-    while ((result - x0).infNorm() > e)
+    while ((result - x0).infNorm() > e) // условие конца - норма "соседних" вычисленных решений на бесконечности должна быть меньше или равна точности
     {
         x0 = result;
         result = x0 - (H * ((getM() * x0) - getb()));
@@ -142,15 +150,16 @@ void SLE::HZ(const double& e, const Vector& ee)
     fout.close();
 }
 
+// Метод Якоби
 void SLE::Jacobi(const double& e, const Vector& ee) {
     ofstream fout("output.txt", ios::app);
     fout << fixed << setprecision(8);
     Vector result(size);
-    Matrix H = (getM().diag()).reflect();
-    Vector x0 = ee;
+    Matrix H = (getM().diag()).reflect(); // матрица D^-1
+    Vector x0 = ee; // начальный вектор
     result = x0 - H * ((getM() * x0) - getb());
     int m = 1;
-    while ((result - x0).infNorm() > e) {
+    while ((result - x0).infNorm() > e) { // условие конца
         x0 = result;
         result = x0 - H * (getM() * x0 - getb());
         m++;
@@ -159,6 +168,7 @@ void SLE::Jacobi(const double& e, const Vector& ee) {
     fout.close();
 }
 
+// Метод сопряжённых градиентов
 void SLE::SGrd(const double& e, const Vector& ee)
 {
     ofstream fout("output.txt", ios::app);
@@ -166,24 +176,24 @@ void SLE::SGrd(const double& e, const Vector& ee)
     Vector result = ee, x0 = ee;
     int m = 0;
     SLE t = *this;
-    Vector r = (t.getM() * x0) - t.getb(), g = r;
-    if (!g)
+    Vector r = (t.getM() * x0) - t.getb(), g = r; // задаём начальные значения вектора невязки и градиента
+    if (!g) // проверка на не базисность вектора градиента
     {
         fout << "m = " << m << endl << "x = " << result;
         fout.close();
         return;
     }
-    double a = (r * g) / ((t.getM() * g) * g);
-    result = x0 - (a * g); r = r - (a * (t.getM() * g));
+    double a = (r * g) / ((t.getM() * g) * g); // коэфф. для вычисления вектора x
+    result = x0 - (a * g); r = r - (a * (t.getM() * g)); // первые значения
     ++m;
-    if (!r)
+    if (!r) // проверка...
     {
         fout << "m = " << m << endl << "x = " << result;
         fout.close();
         return;
     }
-    double gamma;
-    while ((result - x0).infNorm() > e)
+    double gamma; // коэфф. для вычисления градиента
+    while ((result - x0).infNorm() > e) // основной цикл программы
     {
         x0 = result;
         gamma = ((t.getM() * r) * g) / ((t.getM() * g) * g);
@@ -197,6 +207,7 @@ void SLE::SGrd(const double& e, const Vector& ee)
     fout.close();
 }
 
+// метод Ричардсона с чебышёвскими параметрами (трёхчленная формула)
 void SLE::Rchd3(const double& e, const Vector& ee, const double& alpha, const double& beta)
 {
     ofstream fout("output.txt", ios::app);
@@ -209,12 +220,15 @@ void SLE::Rchd3(const double& e, const Vector& ee, const double& alpha, const do
     catch (int) {
         return;
     }
-    Vector xkn1 = ee; // âåêòîð x(k - 1)
-    double w1 = -1 * (beta - alpha) / (beta + alpha);
-    int m = 0;
-    Vector xk = xkn1 - ((2 / (beta + alpha)) * ((getM() * xkn1) - getb()));
+    /* Задаём начальные векторы и коэффициенты */
+    Vector xkn1 = ee; // вектор x(k - 1)
+    double w1 = -1 * (beta - alpha) / (beta + alpha); // начальный коэффициент w
+    int m = 0; // номер итерации
+    /* первая итерация */
+    Vector xk = xkn1 - ((2 / (beta + alpha)) * ((getM() * xkn1) - getb())); // вектор xk, первая итерация
     ++m;
-    double wk = w1, wkp1 = w1;
+    double wk = w1, wkp1 = w1; // вычисление каждого нового w требует w1 и предыдущего w
+    /* Рабочий цикл */
     while ((xk - xkn1).infNorm() > e)
     {
         wkp1 = 1 / ((2 * (1 / w1)) - wk);
@@ -224,6 +238,7 @@ void SLE::Rchd3(const double& e, const Vector& ee, const double& alpha, const do
         wk = wkp1;
         ++m;
     }
+    /* печать результата */
     fout << "m = " << m << endl << "x = " << result;
     fout.close();
 }
