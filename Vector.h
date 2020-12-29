@@ -1,36 +1,56 @@
 #pragma once
 #include <fstream>
+#include <initializer_list>
 
 using namespace std;
 
 class Vector // класс для работы с векторами
 {
     double* V;
-    int size;
+    size_t size;
 
-    void rawClean()
-    {
-        delete[] this->V;
-    }
-
-    void rawCopy(const Vector& that)
-    {
-        this->size = that.size;
-        this->V = new double[this->size];
-        for (int i = 0; i < this->size; i++)
-            this->V[i] = that.V[i];
-    }
+    void rawClean();
+    void rawCopy(const Vector&);
 
 public:
+
+    double* next(double*);
+
+    class Iterator
+    {
+        double* el;
+        Vector* belong;
+
+    public:
+
+        Iterator();
+        Iterator(double&, Vector&);
+        Iterator(const Iterator&);
+        ~Iterator();
+        Iterator& operator = (const Iterator&);
+
+        Iterator operator ++ (int);
+        Iterator operator ++ ();
+
+        bool operator == (const Iterator&);
+        bool operator != (const Iterator&);
+
+        double& operator * ();
+    };
+
+    Iterator begin();
+    Iterator end();
 
     Vector(const Vector&);
     Vector();
     ~Vector();
     Vector& operator = (const Vector&);
-    Vector(const int&);
-    Vector(const int&, double*);
+    Vector(const size_t&);
+    Vector(const size_t&, double*);
+    Vector(const initializer_list<double>&);
+    Vector& operator = (const initializer_list<double>&);
 
-    int getSize() const;
+    size_t getSize() const;
     double& operator [](const int&);
     double& get(const int&) const;
 
@@ -39,6 +59,8 @@ public:
     Vector operator -(const Vector&);
     Vector operator +(const Vector&);
     bool operator !() const;
+    bool operator == (const Vector&);
+    bool operator != (const Vector&);
 
     double infNorm() const;
     double abs() const;
