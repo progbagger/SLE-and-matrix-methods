@@ -2,12 +2,12 @@
 #include <fstream>
 #include <iomanip>
 
-using namespace std;
+void SLE::rawCopy(const SLE& that) { this->size = that.size; M = that.M; b = that.b; }
 
 SLE::SLE() { size = 0; M = Matrix(); b = Vector(); }
 SLE::SLE(const SLE& that) { this->rawCopy(that); }
 SLE::SLE(Matrix m, Vector v) { size = m.getSize(); M = m; b = v; }
-SLE::SLE(int s) { size = s; M = Matrix(s); b = Vector(s); }
+SLE::SLE(size_t s) { size = s; M = Matrix(s); b = Vector(s); }
 SLE::~SLE() {}
 
 SLE& SLE::operator = (const SLE& that) {
@@ -16,12 +16,30 @@ SLE& SLE::operator = (const SLE& that) {
     return *this;
 }
 
+bool SLE::operator == (const SLE& that)
+{
+    return (M == that.M && b == that.b && size == that.size);
+}
+
+bool SLE::operator != (const SLE& that)
+{
+    return (M != that.M || b != that.b || size != that.size);
+}
+
+SLE::SLE(const pair<Matrix, Vector>& p) : size(p.first.getSize()), M(p.first), b(p.second) {}
+
+SLE& SLE::operator = (const pair<Matrix, Vector>& p)
+{
+    *this = SLE(p);
+    return *this;
+}
+
 // геттеры
 Vector SLE::c_getb() const { return b; }
 Vector& SLE::getb() { return b; }
 Matrix SLE::c_getM() const { return M; }
 Matrix& SLE::getM() { return M; }
-int SLE::getSize() const { return size; }
+size_t SLE::getSize() const { return size; }
 
 // операторы ввода/вывода СЛАУ
 istream& operator >> (istream& in, SLE& that)
