@@ -1,41 +1,29 @@
 #pragma once
 #include "Vector.h"
 #include <fstream>
+#include <initializer_list>
 
 using namespace std;
 
 class Matrix // класс для работы с квадратными матрицами
 {
     double** M;
-    int size;
+    size_t size;
 
-    void rawClean()
-    {
-        for (int i = 0; i < this->size; i++)
-            delete[] this->M[i];
-        delete[] this->M;
-    }
-
-    void rawCopy(const Matrix& that)
-    {
-        this->size = that.size;
-        this->M = new double* [this->size];
-        for (int i = 0; i < this->size; i++)
-            this->M[i] = new double[this->size];
-        for (int i = 0; i < this->size; i++)
-            for (int j = 0; j < this->size; j++)
-                this->M[i][j] = that.M[i][j];
-    }
+    void rawClean();
+    void rawCopy(const Matrix&);
 
 public:
 
     Matrix(const Matrix&);
     Matrix();
     ~Matrix();
-    Matrix(const int&);
+    Matrix(const size_t&);
+    Matrix(const initializer_list<Vector>&);
     Matrix& operator = (const Matrix&);
+    Matrix& operator = (const initializer_list<Vector>&);
 
-    int getSize() const;
+    size_t getSize() const;
     double*& operator [] (const int&); // с возможностью изменения
     double*& get(const int&) const;
 
@@ -45,6 +33,8 @@ public:
     Matrix operator * (const Matrix&);
     Matrix operator * (const double&);
     Matrix operator !();
+    bool operator == (const Matrix&) const;
+    bool operator != (const Matrix&) const;
 
     void swap(const int&, const int&); // смена строк местами
     double det() const; // вычисление определителя матрицы
