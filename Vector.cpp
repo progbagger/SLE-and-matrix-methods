@@ -3,12 +3,88 @@
 
 using namespace std;
 
-int Vector::getSize() const { return size; }
+void Vector::rawClean()
+{
+    delete[] this->V;
+}
+
+void Vector::rawCopy(const Vector& that)
+{
+    this->size = that.size;
+    this->V = new double[this->size];
+    for (int i = 0; i <= this->size; i++)
+        this->V[i] = that.V[i];
+}
+
+size_t Vector::getSize() const { return size; }
 double& Vector::operator [] (const int& r) { return V[r]; }
 double& Vector::get(const int& r) const { return V[r]; }
 Vector::Vector(const Vector& that) { rawCopy(that); }
-Vector::Vector() { size = 0; V = nullptr; }
+Vector::Vector() { size = 0; V = new double; }
 Vector::~Vector() { rawClean(); }
+
+double* Vector::next(double* el)
+{
+    el++;
+    return el;
+}
+
+Vector::Iterator::Iterator() : el(nullptr), belong(nullptr) {};
+Vector::Iterator::Iterator(double& c_el, Vector& c_belong) : el(&c_el), belong(&c_belong) {};
+Vector::Iterator::Iterator(const Iterator& that)
+{
+    el = that.el;
+    belong = that.belong;
+}
+Vector::Iterator::~Iterator() {};
+
+Vector::Iterator& Vector::Iterator::operator = (const Iterator& that)
+{
+    if (this != &that)
+    {
+        el = that.el;
+        belong = that.belong;
+    }
+    return *this;
+}
+
+Vector::Iterator Vector::Iterator::operator ++ (int)
+{
+    Iterator tmp(*this);
+    el = belong->next(el);
+    return tmp;
+}
+
+Vector::Iterator Vector::Iterator::operator ++ ()
+{
+    el = belong->next(el);
+    return *this;
+}
+
+bool Vector::Iterator::operator == (const Iterator& that)
+{
+    return (*el == *that.el && *belong == *that.belong);
+}
+
+bool Vector::Iterator::operator != (const Iterator& that)
+{
+    return (*el != *that.el || *belong != *that.belong);
+}
+
+double& Vector::Iterator::operator * ()
+{
+    return *el;
+}
+
+Vector::Iterator Vector::begin()
+{
+    return Iterator(V[0], *this);
+}
+
+Vector::Iterator Vector::end()
+{
+    return Iterator(V[size], *this);
+}
 
 Vector& Vector::operator = (const Vector& that) {
     if (this != &that)
@@ -19,18 +95,38 @@ Vector& Vector::operator = (const Vector& that) {
     return *this;
 }
 
-Vector::Vector(const int& s) {
+Vector::Vector(const size_t& s) {
     size = s;
-    V = new double[size];
+    V = new double[size + 1];
     for (int i = 0; i < size; i++)
         V[i] = 1;
+    V[size] = 0;
 }
 
-Vector::Vector(const int& s, double* m) {
+Vector::Vector(const size_t& s, double* m) {
     size = s;
-    V = new double[size];
+    V = new double[size + 1];
     for (int i = 0; i < size; i++)
         V[i] = m[i];
+    V[size] = 0;
+}
+
+Vector::Vector(const initializer_list<double>& list) : size(list.size())
+{
+    V = new double[size + 1];
+    size_t i = 0;
+    for (const auto& el : list)
+    {
+        V[i] = el;
+        i++;
+    }
+    V[size] = 0;
+}
+
+Vector& Vector::operator = (const initializer_list<double>& list)
+{
+    *this = Vector(list);
+    return *this;
 }
 
 // ниже приведены стандартные операторы для работы с векторами
@@ -81,6 +177,30 @@ bool Vector::operator ! () const {
     bool result = true;
     for (int i = 0; i < size; i++)
         if (V[i] != 0)
+        {
+            result = false;
+            break;
+        }
+    return result;
+}
+
+bool Vector::operator != (const Vector& that)
+{
+    bool result = false;
+    for (int i = 0; i < size; i++)
+        if (V[i] != that.V[i])
+        {
+            result = true;
+            break;
+        }
+    return result;
+}
+
+bool Vector::operator == (const Vector& that)
+{
+    bool result = true;
+    for (int i = 0; i < size; i++)
+        if (V[i] != that.V[i])
         {
             result = false;
             break;
