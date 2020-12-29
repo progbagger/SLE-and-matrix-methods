@@ -1,7 +1,25 @@
 #include "Matrix.h"
-#include <fstream>
 
 using namespace std;
+
+void Matrix::rawClean()
+{
+    for (int i = 0; i < this->size; i++)
+        delete[] this->M[i];
+    delete[] this->M;
+}
+
+void Matrix::rawCopy(const Matrix& that)
+{
+    this->size = that.size;
+    this->M = new double* [this->size];
+    for (int i = 0; i < this->size; i++)
+        this->M[i] = new double[this->size];
+    for (int i = 0; i < this->size; i++)
+        for (int j = 0; j < this->size; j++)
+            this->M[i][j] = that.M[i][j];
+}
+
 
 Matrix::Matrix(const Matrix& that) { rawCopy(that); }
 Matrix::Matrix() { size = 0; this->M = nullptr; }
@@ -15,13 +33,12 @@ Matrix& Matrix::operator = (const Matrix& that) {
     return *this;
 }
 
-int Matrix::getSize() const { return size; }
+size_t Matrix::getSize() const { return size; }
 double*& Matrix::operator [] (const int& r) { return M[r]; } // с изменением
 double*& Matrix::get(const int& r) const { return M[r]; }
 
 
-Matrix::Matrix(const int& s) {
-    size = s;
+Matrix::Matrix(const size_t& s) : size(s) {
     M = new double*[size];
     for (int i = 0; i < size; i++)
         M[i] = new double[size];
@@ -31,6 +48,26 @@ Matrix::Matrix(const int& s) {
                 M[i][j] = 1;
             else
                 M[i][j] = 0;
+}
+
+Matrix::Matrix(const initializer_list<Vector>& list) : size(list.size())
+{
+    M = new double* [size];
+    for (int i = 0; i < size; i++)
+        M[i] = new double[size];
+    size_t i = 0;
+    for (const auto& v : list)
+    {
+        for (size_t j = 0; j < size; j++)
+            M[i][j] = v.get(j);
+        i++;
+    }
+}
+
+Matrix& Matrix::operator = (const initializer_list<Vector>& list)
+{
+    *this = Matrix(list);
+    return *this;
 }
 
 Matrix Matrix::H() { // нахождение матрицы отражений
@@ -124,6 +161,32 @@ Matrix Matrix::operator !()
     for (int i = 0; i < result.size; i++)
         for (int j = 0; j < result.size; j++)
             result.M[i][j] = M[j][i];
+    return result;
+}
+
+bool Matrix::operator == (const Matrix& that) const
+{
+    bool result = true;
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
+            if (M[i][j] != that.M[i][j])
+            {
+                result = false;
+                break;
+            }
+    return result;
+}
+
+bool Matrix::operator != (const Matrix& that) const
+{
+    bool result = false;
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
+            if (M[i][j] != that.M[i][j])
+            {
+                result = true;
+                break;
+            }
     return result;
 }
 
@@ -264,6 +327,7 @@ Vector operator * (const Matrix& that, const Vector& v)
     return result;
 }
 
+// QR метод нахождения собственных чисел и векторов матрицы
 void Matrix::QR()
 {
 
