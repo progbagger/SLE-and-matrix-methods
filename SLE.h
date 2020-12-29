@@ -2,6 +2,7 @@
 #include "Matrix.h"
 #include "Vector.h"
 #include <fstream>
+#include <initializer_list>
 
 using namespace std;
 
@@ -9,26 +10,37 @@ class SLE // класс для работы с системами линейны
 {
 private:
 
-    int size;
+    size_t size;
     Matrix M;
     Vector b;
 
-    void rawCopy(const SLE& that) { this->size = that.size; M = that.M; b = that.b; }
+    void rawCopy(const SLE& that);
 
 public:
+
+    class Iterator;
+
+    Iterator begin();
+    Iterator end();
 
     SLE();
     SLE(const SLE& that);
     SLE(Matrix m, Vector v);
     SLE& operator = (const SLE& that);
-    SLE(int s);
+    SLE(size_t s);
+    SLE(const pair<Matrix, Vector>&);
+    SLE& operator = (const pair<Matrix, Vector>&);
     ~SLE();
+
+    // операторы сравнения
+    bool operator == (const SLE&);
+    bool operator != (const SLE&);
 
     Vector c_getb() const;
     Vector& getb();
     Matrix c_getM() const;
     Matrix& getM();
-    int getSize() const;
+    size_t getSize() const;
 
     // прямые методы
     Vector Gauss();
