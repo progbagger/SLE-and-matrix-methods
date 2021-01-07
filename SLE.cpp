@@ -16,12 +16,12 @@ SLE& SLE::operator = (const SLE& that) {
     return *this;
 }
 
-bool SLE::operator == (const SLE& that)
+bool SLE::operator == (const SLE& that) const
 {
     return (M == that.M && b == that.b && size == that.size);
 }
 
-bool SLE::operator != (const SLE& that)
+bool SLE::operator != (const SLE& that) const
 {
     return (M != that.M || b != that.b || size != that.size);
 }
@@ -44,9 +44,9 @@ size_t SLE::getSize() const { return size; }
 // операторы ввода/вывода СЛАУ
 istream& operator >> (istream& in, SLE& that)
 {
-    for (int i = 0; i < that.getSize(); i++)
+    for (size_t i = 0; i < that.getSize(); i++)
     {
-        for (int j = 0; j < that.getSize(); j++)
+        for (size_t j = 0; j < that.getSize(); j++)
             in >> that.getM()[i][j];
         in >> that.getb()[i];
     }
@@ -55,9 +55,9 @@ istream& operator >> (istream& in, SLE& that)
 
 ostream& operator << (ostream& out, const SLE& that)
 {
-    for (int i = 0; i < that.getSize(); i++)
+    for (size_t i = 0; i < that.getSize(); i++)
     {
-        for (int j = 0; j < that.getSize(); j++)
+        for (size_t j = 0; j < that.getSize(); j++)
             out << that.c_getM().get(i)[j] << '\t';
         out << that.c_getb().get(i) << endl;
     }
@@ -67,7 +67,7 @@ ostream& operator << (ostream& out, const SLE& that)
 
 void SLE::iView()
 {
-    for (int i = 0; i < size; i++)
+    for (size_t i = 0; i < size; i++)
     {
         double t = M[i][i];
         M[i][i] = 1;
@@ -77,8 +77,8 @@ void SLE::iView()
             M[i][i] = M[i][0];
             M[i][0] = temp;
         }
-        for (int j = 1; j < this->size; j++)
-           M[i][j] /= -t;
+        for (size_t j = 1; j < this->size; j++)
+            M[i][j] /= -t;
         b[i] /= t;
     }
 }
@@ -86,15 +86,15 @@ void SLE::iView()
 /* ПРЯМЫЕ МЕТОДЫ */
 
 // решение системы методом Гаусса
-Vector SLE::Gauss()
+Vector SLE::Gauss() const
 {
     Matrix Mt = M; Vector bt = b; // чтобы не испортить исходные
     Vector result(size);
     // прямой ход
-    for (int i = 0; i < size - 1; i++)
+    for (size_t i = 0; i < size - 1; i++)
     {
         if (!Mt[i][i])
-            for (int j = i + 1; j < size; j++)
+            for (size_t j = i + 1; j < size; j++)
             {
                 if (Mt[i][i])
                 {
@@ -103,10 +103,10 @@ Vector SLE::Gauss()
                     break;
                 }
             }
-        for (int j = i + 1; j < size; j++)
+        for (size_t j = i + 1; j < size; j++)
         {
             double temp = Mt[j][i] / Mt[i][i];
-            for (int k = 0; k < size; k++)
+            for (size_t k = 0; k < size; k++)
             {
                 Mt[j][k] -= Mt[i][k] * temp;
             }
@@ -117,18 +117,18 @@ Vector SLE::Gauss()
     for (int i = size - 1; i >= 0; i--)
     {
         result[i] = bt[i];
-        for (int j = i + 1; j < size; j++)
+        for (size_t j = i + 1; j < size; j++)
             result[i] -= result[j] * Mt[i][j];
         result[i] /= Mt[i][i];
     }
     return result;
 }
 
-Vector SLE::HR() // решение СЛАУ методом отражений
+Vector SLE::HR() const // решение СЛАУ методом отражений
 {
     Matrix MM = M; Vector bb = b; // делаем доп. систему чтобы не испортить исходную
     Vector result(size);
-    for (int i = 0; i < result.getSize(); i++)
+    for (size_t i = 0; i < result.getSize(); i++)
         result[i] = 0;
     Matrix H = MM.H();
     // преобразовываем систему, умножая матрицу системы и вектор свободных членов на матрицу отражений слева
@@ -147,7 +147,7 @@ Vector SLE::HR() // решение СЛАУ методом отражений
 /* ИТЕРАЦИОННЫЕ МЕТОДЫ */
 
 // Метод Гаусса-Зейделя
-void SLE::HZ(const double& e, const Vector& ee)
+void SLE::HZ(const double& e, const Vector& ee) const
 {
     //e - точность вычислений
     Vector result(size);
@@ -155,12 +155,12 @@ void SLE::HZ(const double& e, const Vector& ee)
     Matrix D = t.M.diag(), L = -1 * t.M.lowerTriangle();
     Matrix H = (D - L).reflect(); // вычисление (D - L)^-1
     Vector x0 = ee; // начальное приближение, равное вектору свободных членов в преобразованной системе
-    result = x0 - H * ((getM() * x0) - getb()); // первая итерация
-    int m = 1;
+    result = x0 - H * ((c_getM() * x0) - c_getb()); // первая итерация
+    size_t m = 1;
     while ((result - x0).infNorm() > e) // условие конца - норма "соседних" вычисленных решений на бесконечности должна быть меньше или равна точности
     {
         x0 = result;
-        result = x0 - (H * ((getM() * x0) - getb()));
+        result = x0 - (H * ((c_getM() * x0) - c_getb()));
         m++;
     }
     ofstream fout("output.txt", ios::app);
@@ -169,17 +169,18 @@ void SLE::HZ(const double& e, const Vector& ee)
 }
 
 // Метод Якоби
-void SLE::Jacobi(const double& e, const Vector& ee) {
+void SLE::Jacobi(const double& e, const Vector& ee) const
+{
     ofstream fout("output.txt", ios::app);
     fout << fixed << setprecision(8);
     Vector result(size);
-    Matrix H = (getM().diag()).reflect(); // матрица D^-1
+    Matrix H = (c_getM().diag()).reflect(); // матрица D^-1
     Vector x0 = ee; // начальный вектор
-    result = x0 - H * ((getM() * x0) - getb());
-    int m = 1;
+    result = x0 - H * ((c_getM() * x0) - c_getb());
+    size_t m = 1;
     while ((result - x0).infNorm() > e) { // условие конца
         x0 = result;
-        result = x0 - H * (getM() * x0 - getb());
+        result = x0 - H * (c_getM() * x0 - c_getb());
         m++;
     }
     fout << "m = " << m << endl << "x = " << result;
@@ -187,12 +188,12 @@ void SLE::Jacobi(const double& e, const Vector& ee) {
 }
 
 // Метод сопряжённых градиентов
-void SLE::SGrd(const double& e, const Vector& ee)
+void SLE::SGrd(const double& e, const Vector& ee) const
 {
     ofstream fout("output.txt", ios::app);
     fout << fixed << setprecision(8);
     Vector result = ee, x0 = ee;
-    int m = 0;
+    size_t m = 0;
     SLE t = *this;
     Vector r = (t.getM() * x0) - t.getb(), g = r; // задаём начальные значения вектора невязки и градиента
     if (!g) // проверка на не базисность вектора градиента
@@ -226,7 +227,7 @@ void SLE::SGrd(const double& e, const Vector& ee)
 }
 
 // метод Ричардсона с чебышёвскими параметрами (трёхчленная формула)
-void SLE::Rchd3(const double& e, const Vector& ee, const double& alpha, const double& beta)
+void SLE::Rchd3(const double& e, const Vector& ee, const double& alpha, const double& beta) const
 {
     ofstream fout("output.txt", ios::app);
     fout << fixed << setprecision(8);
@@ -241,16 +242,16 @@ void SLE::Rchd3(const double& e, const Vector& ee, const double& alpha, const do
     /* Задаём начальные векторы и коэффициенты */
     Vector xkn1 = ee; // вектор x(k - 1)
     double w1 = -1 * (beta - alpha) / (beta + alpha); // начальный коэффициент w
-    int m = 0; // номер итерации
+    size_t m = 0; // номер итерации
     /* первая итерация */
-    Vector xk = xkn1 - ((2 / (beta + alpha)) * ((getM() * xkn1) - getb())); // вектор xk, первая итерация
+    Vector xk = xkn1 - ((2 / (beta + alpha)) * ((c_getM() * xkn1) - c_getb())); // вектор xk, первая итерация
     ++m;
     double wk = w1, wkp1 = w1; // вычисление каждого нового w требует w1 и предыдущего w
     /* Рабочий цикл */
     while ((xk - xkn1).infNorm() > e)
     {
         wkp1 = 1 / ((2 * (1 / w1)) - wk);
-        result = xk + (wk * wkp1) * (xk - xkn1) - (2 / (beta + alpha)) * (1 + wk * wkp1) * (getM() * xk - getb());
+        result = xk + (wk * wkp1) * (xk - xkn1) - (2 / (beta + alpha)) * (1 + wk * wkp1) * (c_getM() * xk - c_getb());
         xkn1 = xk;
         xk = result;
         wk = wkp1;
