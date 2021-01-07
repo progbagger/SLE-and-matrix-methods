@@ -555,5 +555,11 @@ void Matrix::RQI(const double& e, const double& lambda_e) const
     if (!iterationCount)
         fout << " (The eigenvalue was guessed by the approximation)";
     fout << "\nEigenvalue: " << ro << endl;
-    fout << "Eigenvector: " << xk;
+    if (iterationCount)
+    {
+        fout << "Eigenvector:\n";
+        for (size_t i = 0; i < size; i++)
+            fout << "[" << i + 1 << "] = " << xk[i] << endl;
+    }
+    fout << endl;
 }
