@@ -8,4 +8,4 @@
 4) Трёхчленная формула реализации метода Ричардсона с чебышёвскими параметрами: void SLE::Rchd3(const double&, const Vector&, const double&, const double&)
 # Методы поиска собственных значений
 1) QR-метод: void Matrix::QR(const double&)
-2) Метод обратных итераций со сдвигом с соотношением Рэлея: void Matrix::INVIT(const double&)
+2) Метод обратных итераций со сдвигом с соотношением Рэлея: void Matrix::INVIT(const double&, const double&)
