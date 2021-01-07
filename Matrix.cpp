@@ -510,7 +510,7 @@ void Matrix::QR(const double& e) const
     fout << "Iteration: " << iterationCounter << endl;
     fout << "Eigenvalues: " << endl;
     for (size_t i = 0; i < size; i++)
-        fout << i + 1 << ")\t" << result[i] << endl;
+        fout << i + 1 << ") " << result[i] << endl;
     fout << endl;
 }
 
