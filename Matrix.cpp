@@ -543,7 +543,7 @@ void Matrix::RQI(const double& e, const double& lambda_e) const
         if (!M.det())
             break;
         SLE sle(M, xkn1);
-        yk = sle.HR();
+        yk = sle.Gauss();
         xk = yk / yk.euclidNorm();
         difference = (xk - xkn1).infNorm();
         xkn1 = xk;
