@@ -442,41 +442,34 @@ Matrix Matrix::Hausholder() const
     return result;
 }
 
-// преобразование Гивенса
-Matrix Matrix::Givens() const
+// Построение матрицы отражений для каждого шага QR-алгоритма
+Matrix Matrix::QR_reflection() const
 {
     ofstream fout("output.txt", ios::app);
     fout << fixed << setprecision(8);
     Matrix Q(size), R = *this;
     // выполняется n - 1 раз
-    Matrix G1(size), G2(size);
     for (size_t i = 0; i < size - 1; i++)
     {
-        /*
-        * ниже вычисляются элементы промежуточной матрицы, у которой на диагонали 1,
-        * вне диагонали 0 и на определённых местах есть подматрица 2 x 2 с
-        * элементами s и c
-        */
-        double t = R.get(i)[i] / R.get(i + 1)[i], c = 1 / sqrt(1 + t * t), s = t * c;
-        //fout << "t = " << t << endl << "c = " << c << endl << "s = " << s << endl << endl;
-        Matrix G(size);
-        G[i][i] = s;
-        G[i][i + 1] = c;
-        G[i + 1][i] = -c;
-        G[i + 1][i + 1] = s;
-        if (!i)
-            G1 = G;
-        else
-            G2 = G;
-        //fout << "G =" << endl << G;
-        Q *= !G;
-        //fout << "Q =" << endl << Q;
-        R = G * R;
-        //fout << "R =" << endl << R;
+        double s = 0;
+        for (size_t j = i; j < size; j++)
+            s += R[j][i] * R[j][i];
+        s = -1 * (R[i][i] / abs(R[i][i])) * sqrt(s);
+        double mu = 1 / sqrt(2 * s * (s - R[i][i]));
+        Vector w(size, 0);
+        w[i] = R[i][i] - s;
+        for (size_t j = i + 1; j < size; j++)
+            w[j] = R[j][i];
+        w *= mu;
+        Matrix W(size);
+        for (size_t j = 0; j < size; j++)
+            for (size_t k = 0; k < size; k++)
+                W[j][k] = w[j] * w[k];
+        Matrix H = Matrix(size) - 2 * W;
+        Q *= H;
+        R = H * R;
     }
-    fout.close();
-    Matrix A = R * Q;
-    return A;
+    return R * Q;
 }
 
 // QR метод нахождения собственных чисел и векторов матрицы
@@ -488,21 +481,17 @@ void Matrix::QR(const double& e) const
     * Первый шаг - матрица Хессинберга, получаемая в результате преобразования Хессенберга
     */
     Matrix B = (*this).Hausholder();
-    /*
-    * Второй шаг - преобразование Гивенса нашей матрицы Хессинберга - разложение на Q и R
-    */
-    B = B.Givens();
     Vector result = B.diagV() /* запись в результат текущих приближений собственных значений */, resn1(size);
     /*
     * Следующие шаги - преобразование Гивенса (получение матриц Q и R), получение матрицы B2 = R * Q
     * и разложение матрицы B2 преобразованием Гивенса и etc..., пока норма разности диагоналей матриц соседних
     * приближений (векторов собственных чисел) не станет меньше или равна заданной точности
     */
-    size_t iterationCounter = 1;
+    size_t iterationCounter = 0;
     do
     {
         resn1 = result;
-        B = B.Givens();
+        B = B.QR_reflection();
         result = B.diagV();
         iterationCounter++;
     } while ((result - resn1).infNorm() > e); // условие конца процесса
@@ -543,7 +532,7 @@ void Matrix::RQI(const double& e, const double& lambda_e) const
         if (!M.det())
             break;
         SLE sle(M, xkn1);
-        yk = sle.Gauss();
+        yk = sle.HR();
         xk = yk / yk.euclidNorm();
         difference = (xk - xkn1).infNorm();
         xkn1 = xk;
