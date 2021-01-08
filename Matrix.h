@@ -62,7 +62,7 @@ public:
 
     // нахождение собственных чисел и собственных векторов
     Matrix Hausholder() const; // преобразование Хаусхолдера
-    Matrix Givens() const; // преобразование Гивенса
+    Matrix QR_reflection() const; // построение матрицы отражений для каждого шага QR-алгоритма
     void QR(const double&) const; // QR-алгоритм
 
     void RQI(const double&, const double&) const; // Обратные итерации со сдвигом с соотношением Рэлея
