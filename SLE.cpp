@@ -124,7 +124,8 @@ Vector SLE::Gauss() const
     return result;
 }
 
-Vector SLE::HR() const // решение СЛАУ методом отражений
+// решение СЛАУ методом отражений
+Vector SLE::HR() const
 {
     Matrix MM = M; Vector bb = b; // делаем доп. систему чтобы не испортить исходную
     Vector result(size);
@@ -164,7 +165,7 @@ void SLE::HZ(const double& e, const Vector& ee) const
         m++;
     }
     ofstream fout("output.txt", ios::app);
-    fout << "m = " << m << endl << "x = " << result;
+    fout << fixed << setprecision(8) << "m = " << m << endl << "x = " << result;
     fout.close();
 }
 
