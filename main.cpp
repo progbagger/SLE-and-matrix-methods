@@ -1,13 +1,15 @@
 #include <fstream>
 #include <iomanip>
 #include "SLE.h"
+#include "Analysis.h"
 using namespace std;
 
 ifstream fin("input.txt");
 ofstream fout("output.txt");
 
 /*
-* Список методов:
+* --------------------------------------------------------Список методов--------------------------------------------------------
+* Решение СЛАУ и поиск собственных значений и векторов:
 * --- Прямые методы решения СЛАУ (применяются к объектам типа SLE) ---
 * - метод Гаусса: Gauss()
 * - метод отражений: HR()
@@ -20,6 +22,12 @@ ofstream fout("output.txt");
 * --- Методы поиска собственных значений (применя.тся к объектам типа Matrix)
 * - QR-метод: QR(const double& - точность)
 * - метод обратных итераций со сдвигом с соотношением Рэлея: RQI(const double& - точность, const double& - приближение с. ч.)
+* Численный анализ:
+* --- Интерполирование:
+* - Интерполяционный многочлен Лагранжа: 
+* -- Vector Lagrange_interpolation_builder(const Vector& - узлы, const Vector& - значения в узлах)
+* -- double Lagrange_interpolation(const double - нужный x0, const double - левая граница отрезка, const double - правая граница
+* отрезка, const Vector& - узлы, const Vector& - значения в узлах)
 */
 
 int main()
@@ -38,7 +46,7 @@ int main()
     * Ввод начальных данных
     */
 
-    int N; fin >> N; // размерность матрицы или системы
+    //int N; fin >> N; // размерность матрицы или системы
 
     ////////////////////////////////////////////////////////////
 
@@ -66,6 +74,25 @@ int main()
     // Методы поиска собственных значений и векторов
     //A.QR(e); // QR-метод
     //A.RQI(e, lambda_e); // метод обратных итераций
+
+    ////////////////////////////////////////////////////////////
+
+    double a, b; fin >> a >> b; // границы отрезка
+    double x0; fin >> x0; // икс, в котором нужно найти значение полинома
+    size_t N; fin >> N; // кол-во узлов
+
+    // запись узлов
+
+    Vector nodes_x(N), nodes_y(N);
+    for (size_t i = 0; i < N; i++)
+        fin >> nodes_x[i] >> nodes_y[i];
+
+    /*
+    * Вызов метода
+    */
+
+    fout << "f(x0) = " << calculatePolynomial(Lagrange_interpolation_builder(nodes_x, nodes_y), x0) << endl << endl; // значение полинома Лагранжа в точке
+    printPolynomial(Lagrange_interpolation_builder(nodes_x, nodes_y)); // вывод полинома Лагранжа
 
     fin.close();
     fout.close();
