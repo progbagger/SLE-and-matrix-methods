@@ -4,10 +4,10 @@
 
 using namespace std;
 
-class Vector // класс для работы с векторами
+class Vector // РєР»Р°СЃСЃ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РІРµРєС‚РѕСЂР°РјРё
 {
     double* V;
-    size_t size; // размер вектора
+    size_t size; // СЂР°Р·РјРµСЂ РІРµРєС‚РѕСЂР°
 
     void rawClean();
     void rawCopy(const Vector&);
@@ -20,35 +20,35 @@ public:
     Vector& operator = (const Vector&);
     Vector(const size_t&);
     Vector(const size_t&, const double&);
-    Vector(const size_t&, const Vector&); // размер и вектор-массив
+    Vector(const size_t&, const Vector&); // СЂР°Р·РјРµСЂ Рё РІРµРєС‚РѕСЂ-РјР°СЃСЃРёРІ
     Vector(const initializer_list<double>&);
     Vector& operator = (const initializer_list<double>&);
 
-    size_t getSize() const; // размер вектора
-    double& operator [] (const size_t&); // с возможностью изменения
-    double& get(const size_t&) const; // константный
+    size_t getSize() const; // СЂР°Р·РјРµСЂ РІРµРєС‚РѕСЂР°
+    double& operator [] (const size_t&); // СЃ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊСЋ РёР·РјРµРЅРµРЅРёСЏ
+    double& get(const size_t&) const; // РєРѕРЅСЃС‚Р°РЅС‚РЅС‹Р№
 
-    double operator * (const Vector&) const; // скалярное произведение
-    Vector operator / (const double&) const; // деление на константу
+    double operator * (const Vector&) const; // СЃРєР°Р»СЏСЂРЅРѕРµ РїСЂРѕРёР·РІРµРґРµРЅРёРµ
+    Vector operator / (const double&) const; // РґРµР»РµРЅРёРµ РЅР° РєРѕРЅСЃС‚Р°РЅС‚Сѓ
     Vector& operator /= (const double&);
     Vector& operator *= (const double&);
-    Vector operator - (const Vector&) const; // вычитание векторов
+    Vector operator - (const Vector&) const; // РІС‹С‡РёС‚Р°РЅРёРµ РІРµРєС‚РѕСЂРѕРІ
     Vector& operator -= (const Vector&);
-    Vector operator + (const Vector&) const; // сложение векторов
+    Vector operator + (const Vector&) const; // СЃР»РѕР¶РµРЅРёРµ РІРµРєС‚РѕСЂРѕРІ
     Vector& operator += (const Vector&);
-    bool operator ! () const; // ненулевой вектор
+    bool operator ! () const; // РЅРµРЅСѓР»РµРІРѕР№ РІРµРєС‚РѕСЂ
     bool operator == (const Vector&) const;
     bool operator != (const Vector&) const;
 
-    double infNorm() const; // норма на бесконечности
-    double euclidNorm() const; // евклидова норма
-    double abs() const; // модуль вектора
-    void swap(const size_t& i1, const size_t& i2); // поменять элементы местами
+    double infNorm() const; // РЅРѕСЂРјР° РЅР° Р±РµСЃРєРѕРЅРµС‡РЅРѕСЃС‚Рё
+    double euclidNorm() const; // РµРІРєР»РёРґРѕРІР° РЅРѕСЂРјР°
+    double abs() const; // РјРѕРґСѓР»СЊ РІРµРєС‚РѕСЂР°
+    void swap(const size_t& i1, const size_t& i2); // РїРѕРјРµРЅСЏС‚СЊ СЌР»РµРјРµРЅС‚С‹ РјРµСЃС‚Р°РјРё
 
-    friend Vector operator * (const double&, const Vector&); // коммутативное умножение на константу
-    friend Vector operator * (const Vector&, const double&); // коммунативное умножение на константу
+    friend Vector operator * (const double&, const Vector&); // РєРѕРјРјСѓС‚Р°С‚РёРІРЅРѕРµ СѓРјРЅРѕР¶РµРЅРёРµ РЅР° РєРѕРЅСЃС‚Р°РЅС‚Сѓ
+    friend Vector operator * (const Vector&, const double&); // РєРѕРјРјСѓРЅР°С‚РёРІРЅРѕРµ СѓРјРЅРѕР¶РµРЅРёРµ РЅР° РєРѕРЅСЃС‚Р°РЅС‚Сѓ
 
-    // операторы ввода/вывода вектора
+    // РѕРїРµСЂР°С‚РѕСЂС‹ РІРІРѕРґР°/РІС‹РІРѕРґР° РІРµРєС‚РѕСЂР°
     friend istream& operator >> (std::istream&, Vector&);
     friend ostream& operator << (std::ostream&, const Vector&);
 };
