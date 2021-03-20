@@ -14,8 +14,8 @@ double Polynomial::get(const size_t& d) const { return p.get(d); }
 double& Polynomial::operator [] (const size_t& r) { return p[r]; }
 
 /*
-* Ôóíêöèÿ, âû÷èñëÿþùàÿ ñòåïåíü ïîëèíîìà, ïîëó÷èâøåãîñÿ
-* â ðåçóëüòàòå àðèôìåòè÷åñêèõ îïåðàöèé
+* Ð¤ÑƒÐ½ÐºÑ†Ð¸Ñ, Ð²Ñ‹Ñ‡Ð¸ÑÐ»ÑÑŽÑ‰Ð°Ñ ÑÑ‚ÐµÐ¿ÐµÐ½ÑŒ Ð¿Ð¾Ð»Ð¸Ð½Ð¾Ð¼Ð°, Ð¿Ð¾Ð»ÑƒÑ‡Ð¸Ð²ÑˆÐµÐ³Ð¾ÑÑ
+* Ð² Ñ€ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚Ðµ Ð°Ñ€Ð¸Ñ„Ð¼ÐµÑ‚Ð¸Ñ‡ÐµÑÐºÐ¸Ñ… Ð¾Ð¿ÐµÑ€Ð°Ñ†Ð¸Ð¹
 */
 size_t Polynomial::calculateDeg() const
 {
@@ -30,7 +30,7 @@ size_t Polynomial::calculateDeg() const
 }
 
 /*
-* Ôóíêöèÿ, óäàëÿþùàÿ íóëåâûå âûñøèå ñòåïåíè èç ïîëèíîìà
+* Ð¤ÑƒÐ½ÐºÑ†Ð¸Ñ, ÑƒÐ´Ð°Ð»ÑÑŽÑ‰Ð°Ñ Ð½ÑƒÐ»ÐµÐ²Ñ‹Ðµ Ð²Ñ‹ÑÑˆÐ¸Ðµ ÑÑ‚ÐµÐ¿ÐµÐ½Ð¸ Ð¸Ð· Ð¿Ð¾Ð»Ð¸Ð½Ð¾Ð¼Ð°
 */
 void Polynomial::shrink()
 {
@@ -191,7 +191,7 @@ istream& operator >> (istream& in, Polynomial& pol)
 
 ostream& operator << (ostream& out, const Polynomial& pol)
 {
-	bool check = false; // îïðåäåëèòü, íàïå÷àòàíî ëè ïåðâîå íåíóëåâîå ñëàãàåìîå
+	bool check = false; // Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»Ð¸Ñ‚ÑŒ, Ð½Ð°Ð¿ÐµÑ‡Ð°Ñ‚Ð°Ð½Ð¾ Ð»Ð¸ Ð¿ÐµÑ€Ð²Ð¾Ðµ Ð½ÐµÐ½ÑƒÐ»ÐµÐ²Ð¾Ðµ ÑÐ»Ð°Ð³Ð°ÐµÐ¼Ð¾Ðµ
 	for (int i = pol.getSize(); i >= 0; i--)
 	{
 		if (pol.get(i))
@@ -222,7 +222,7 @@ Polynomial int_L(const Vector& x, const Vector& y)
 	Polynomial result(x.getSize() - 1);
 	for (size_t i = 0; i <= result.getSize(); i++)
 	{
-		// ïîñòðîåíèå ïîëèíîìà w(x)
+		// Ð¿Ð¾ÑÑ‚Ñ€Ð¾ÐµÐ½Ð¸Ðµ Ð¿Ð¾Ð»Ð¸Ð½Ð¾Ð¼Ð° w(x)
 		Polynomial w(0, { 1 });
 		double wxk = 1;
 		for (size_t j = 0; j <= result.getSize(); j++)
@@ -241,9 +241,4 @@ Polynomial int_N(const Vector& x, const Vector& y)
 	Polynomial result(x.getSize() - 1);
 
 	return result;
-}
-
-double error(const Polynomial& p1, const Polynomial& p2)
-{
-
 }
