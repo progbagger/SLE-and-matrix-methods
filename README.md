@@ -10,6 +10,6 @@
 1) QR-метод: void Matrix::QR(const double&)
 2) Метод обратных итераций со сдвигом с соотношением Рэлея: void Matrix::RQI(const double&, const double&)
 # Методы численного анализа - в Analysis.h и Analysis.cpp
-1) Вывод полинома: void printPolynomial(const Vector&)
-2) Значение полинома в точке: double calculatePolynomial(const Vector&, const double)
-3) Построение полинома Лагранжа в данных узлах и их значениях: Vector Lagrange_interpolation_builder(const Vector& - узлы, const Vector& - значения в узлах)
+1) Вывод и ввод полинома осуществляются через операторы << и >> соответственно
+2) Значение полинома в точке вычисляется с помощью оператора ()
+3) Построение полинома Лагранжа в данных узлах и их значениях: Polynomial Polynomial::int_L(const Vector& - узлы, const Vector& - значения в узлах)
