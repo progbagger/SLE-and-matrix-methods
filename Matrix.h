@@ -6,10 +6,10 @@
 
 using namespace std;
 
-class Matrix // класс для работы с квадратными матрицами
+class Matrix // РєР»Р°СЃСЃ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РєРІР°РґСЂР°С‚РЅС‹РјРё РјР°С‚СЂРёС†Р°РјРё
 {
     double** M;
-    size_t size; // размер матрицы
+    size_t size; // СЂР°Р·РјРµСЂ РјР°С‚СЂРёС†С‹
 
     void rawClean();
     void rawCopy(const Matrix&);
@@ -26,52 +26,52 @@ public:
     Matrix& operator = (const initializer_list<Vector>&);
     Matrix& operator = (const initializer_list<double>&);
 
-    size_t getSize() const; // размер матрицы
-    double*& operator [] (const size_t&); // с возможностью изменения
-    double*& get(const size_t&) const; // константный
+    size_t getSize() const; // СЂР°Р·РјРµСЂ РјР°С‚СЂРёС†С‹
+    double*& operator [] (const size_t&); // СЃ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊСЋ РёР·РјРµРЅРµРЅРёСЏ
+    double*& get(const size_t&) const; // РєРѕРЅСЃС‚Р°РЅС‚РЅС‹Р№
 
-    // стандартные операторы для работы с матрицами
-    Matrix operator + (const Matrix&) const; // сложение матриц
+    // СЃС‚Р°РЅРґР°СЂС‚РЅС‹Рµ РѕРїРµСЂР°С‚РѕСЂС‹ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РјР°С‚СЂРёС†Р°РјРё
+    Matrix operator + (const Matrix&) const; // СЃР»РѕР¶РµРЅРёРµ РјР°С‚СЂРёС†
     Matrix& operator += (const Matrix&);
-    Matrix operator - (const Matrix&) const; // вычитание матриц
+    Matrix operator - (const Matrix&) const; // РІС‹С‡РёС‚Р°РЅРёРµ РјР°С‚СЂРёС†
     Matrix& operator -= (const Matrix&);
-    Matrix operator * (const Matrix&) const; // перемножение матриц
+    Matrix operator * (const Matrix&) const; // РїРµСЂРµРјРЅРѕР¶РµРЅРёРµ РјР°С‚СЂРёС†
     Matrix& operator *= (const Matrix&);
-    Matrix operator * (const double&) const; // умножение матрицы на константу, также описана коммутативность
+    Matrix operator * (const double&) const; // СѓРјРЅРѕР¶РµРЅРёРµ РјР°С‚СЂРёС†С‹ РЅР° РєРѕРЅСЃС‚Р°РЅС‚Сѓ, С‚Р°РєР¶Рµ РѕРїРёСЃР°РЅР° РєРѕРјРјСѓС‚Р°С‚РёРІРЅРѕСЃС‚СЊ
     Matrix& operator *= (const double&);
-    Matrix operator ! () const; // транспонирование
+    Matrix operator ! () const; // С‚СЂР°РЅСЃРїРѕРЅРёСЂРѕРІР°РЅРёРµ
 
-    // сравнение матриц
+    // СЃСЂР°РІРЅРµРЅРёРµ РјР°С‚СЂРёС†
     bool operator == (const Matrix&) const;
     bool operator != (const Matrix&) const;
 
-    void swap(const size_t&, const size_t&); // смена строк местами
-    double det() const; // вычисление определителя матрицы
+    void swap(const size_t&, const size_t&); // СЃРјРµРЅР° СЃС‚СЂРѕРє РјРµСЃС‚Р°РјРё
+    double det() const; // РІС‹С‡РёСЃР»РµРЅРёРµ РѕРїСЂРµРґРµР»РёС‚РµР»СЏ РјР°С‚СЂРёС†С‹
 
-    Matrix reflect() const; // нахождение обратной матрицы методом Жордана-Гаусса
-    Matrix H() const; // матрица отражений
-    Matrix diag() const; // диагональная матрица
-    Matrix lowerTriangle() const; // нижняя треугольная матрица
-    Matrix upperTriangle() const; // верхняя треугольная матрица
+    Matrix reflect() const; // РЅР°С…РѕР¶РґРµРЅРёРµ РѕР±СЂР°С‚РЅРѕР№ РјР°С‚СЂРёС†С‹ РјРµС‚РѕРґРѕРј Р–РѕСЂРґР°РЅР°-Р“Р°СѓСЃСЃР°
+    Matrix H() const; // РјР°С‚СЂРёС†Р° РѕС‚СЂР°Р¶РµРЅРёР№
+    Matrix diag() const; // РґРёР°РіРѕРЅР°Р»СЊРЅР°СЏ РјР°С‚СЂРёС†Р°
+    Matrix lowerTriangle() const; // РЅРёР¶РЅСЏСЏ С‚СЂРµСѓРіРѕР»СЊРЅР°СЏ РјР°С‚СЂРёС†Р°
+    Matrix upperTriangle() const; // РІРµСЂС…РЅСЏСЏ С‚СЂРµСѓРіРѕР»СЊРЅР°СЏ РјР°С‚СЂРёС†Р°
 
-    // возвращает вектор с диагонали
+    // РІРѕР·РІСЂР°С‰Р°РµС‚ РІРµРєС‚РѕСЂ СЃ РґРёР°РіРѕРЅР°Р»Рё
     Vector diagV() const;
 
-    // спектральная норма матрицы
+    // СЃРїРµРєС‚СЂР°Р»СЊРЅР°СЏ РЅРѕСЂРјР° РјР°С‚СЂРёС†С‹
     double sNorm() const;
 
-    // нахождение собственных чисел и собственных векторов
-    Matrix Hausholder() const; // преобразование Хаусхолдера
-    Matrix QR_reflection() const; // построение матрицы отражений для каждого шага QR-алгоритма
-    void QR(const double&) const; // QR-алгоритм
+    // РЅР°С…РѕР¶РґРµРЅРёРµ СЃРѕР±СЃС‚РІРµРЅРЅС‹С… С‡РёСЃРµР» Рё СЃРѕР±СЃС‚РІРµРЅРЅС‹С… РІРµРєС‚РѕСЂРѕРІ
+    Matrix Hausholder() const; // РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РҐР°СѓСЃС…РѕР»РґРµСЂР°
+    Matrix QR_reflection() const; // РїРѕСЃС‚СЂРѕРµРЅРёРµ РјР°С‚СЂРёС†С‹ РѕС‚СЂР°Р¶РµРЅРёР№ РґР»СЏ РєР°Р¶РґРѕРіРѕ С€Р°РіР° QR-Р°Р»РіРѕСЂРёС‚РјР°
+    void QR(const double&) const; // QR-Р°Р»РіРѕСЂРёС‚Рј
 
-    void RQI(const double&, const double&) const; // Обратные итерации со сдвигом с соотношением Рэлея
+    void RQI(const double&, const double&) const; // РћР±СЂР°С‚РЅС‹Рµ РёС‚РµСЂР°С†РёРё СЃРѕ СЃРґРІРёРіРѕРј СЃ СЃРѕРѕС‚РЅРѕС€РµРЅРёРµРј Р СЌР»РµСЏ
 
-    // операторы ввода/вывода матрицы
+    // РѕРїРµСЂР°С‚РѕСЂС‹ РІРІРѕРґР°/РІС‹РІРѕРґР° РјР°С‚СЂРёС†С‹
     friend istream& operator >> (istream&, Matrix&);
     friend ostream& operator << (ostream&, const Matrix&);
 
-    // коммутативные операторы
-    friend Matrix operator * (const double&, const Matrix&); // умножение матрицы на константу
-    friend Vector operator * (const Matrix&, const Vector&); // умножение матрицы на вектор
+    // РєРѕРјРјСѓС‚Р°С‚РёРІРЅС‹Рµ РѕРїРµСЂР°С‚РѕСЂС‹
+    friend Matrix operator * (const double&, const Matrix&); // СѓРјРЅРѕР¶РµРЅРёРµ РјР°С‚СЂРёС†С‹ РЅР° РєРѕРЅСЃС‚Р°РЅС‚Сѓ
+    friend Vector operator * (const Matrix&, const Vector&); // СѓРјРЅРѕР¶РµРЅРёРµ РјР°С‚СЂРёС†С‹ РЅР° РІРµРєС‚РѕСЂ
 };
