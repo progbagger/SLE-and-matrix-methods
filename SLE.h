@@ -7,13 +7,13 @@
 
 using namespace std;
 
-class SLE // РєР»Р°СЃСЃ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ СЃРёСЃС‚РµРјР°РјРё Р»РёРЅРµР№РЅС‹С… Р°Р»РіРµР±СЂР°РёС‡РµСЃРєРёС… СѓСЂР°РІРЅРµРЅРёР№
+class SLE // класс для работы с системами линейных алгебраических уравнений
 {
 private:
 
-    size_t size; // СЂР°Р·РјРµСЂ СЃРёСЃС‚РµРјС‹
-    Matrix M; // РјР°С‚СЂРёС†Р° СЃРёСЃС‚РµРјС‹
-    Vector b; // РІРµРєС‚РѕСЂ СЃРІРѕР±РѕРґРЅС‹С… С‡Р»РµРЅРѕРІ
+    size_t size; // размер системы
+    Matrix M; // матрица системы
+    Vector b; // вектор свободных членов
 
     void rawCopy(const SLE& that);
 
@@ -28,28 +28,28 @@ public:
     SLE& operator = (const pair<Matrix, Vector>&);
     ~SLE();
 
-    // РѕРїРµСЂР°С‚РѕСЂС‹ СЃСЂР°РІРЅРµРЅРёСЏ
+    // операторы сравнения
     bool operator == (const SLE&) const;
     bool operator != (const SLE&) const;
 
-    Vector c_getb() const; // РєРѕРЅСЃС‚Р°РЅС‚РЅС‹Р№
-    Vector& getb(); // РїРѕР»СѓС‡РµРЅРёРµ РІРµРєС‚РѕСЂР°
-    Matrix c_getM() const; // РєРѕРЅСЃС‚Р°РЅС‚РЅС‹Р№
-    Matrix& getM(); // РїРѕР»СѓС‡РµРЅРёРµ РјР°С‚СЂРёС†С‹
-    size_t getSize() const; // СЂР°Р·РјРµСЂ СЃРёСЃС‚РµРјС‹
+    Vector c_getb() const; // константный
+    Vector& getb(); // получение вектора
+    Matrix c_getM() const; // константный
+    Matrix& getM(); // получение матрицы
+    size_t getSize() const; // размер системы
 
-    // РїСЂСЏРјС‹Рµ РјРµС‚РѕРґС‹
-    Vector Gauss() const; // РјРµС‚РѕРґ Р“Р°СѓСЃСЃР°
-    Vector HR() const; // РјРµС‚РѕРґ РѕС‚СЂР°Р¶РµРЅРёР№
+    // прямые методы
+    Vector Gauss() const; // метод Гаусса
+    Vector HR() const; // метод отражений
 
-    // РёС‚РµСЂР°С†РёРѕРЅРЅС‹Рµ РјРµС‚РѕРґС‹
-    void iView(); // РїСЂРёРІРµРґРµРЅРёРµ СЃРёСЃС‚РµРјС‹ Рє РІРёРґСѓ, РїСЂРёРіРѕРґРЅРѕРјСѓ РґР»СЏ РёС‚РµСЂР°С†РёРё
-    void HZ(const double&, const Vector&) const; // РјРµС‚РѕРґ Р“Р°СѓСЃСЃР°-Р—РµР№РґРµР»СЏ
-    void Jacobi(const double&, const Vector&) const; // РјРµС‚РѕРґ РЇРєРѕР±Рё
-    void SGrd(const double&, const Vector&) const; // РјРµС‚РѕРґ СЃРѕРїСЂСЏР¶С‘РЅРЅС‹С… РіСЂР°РґРёРµРЅС‚РѕРІ
-    void Rchd3(const double&, const Vector&, const double&, const double&) const; // С‚СЂС‘С…С‡Р»РµРЅРЅР°СЏ С„РѕСЂРјСѓР»Р° СЂРµР°Р»РёР·Р°С†РёРё РјРµС‚РѕРґР° Р РёС‡Р°СЂРґСЃРѕРЅР° СЃ С‡РµР±С‹С€С‘РІСЃРєРёРјРё РїР°СЂР°РјРµС‚СЂР°РјРё
+    // итерационные методы
+    void iView(); // приведение системы к виду, пригодному для итерации
+    void HZ(const double&, const Vector&) const; // метод Гаусса-Зейделя
+    void Jacobi(const double&, const Vector&) const; // метод Якоби
+    void SGrd(const double&, const Vector&) const; // метод сопряжённых градиентов
+    void Rchd3(const double&, const Vector&, const double&, const double&) const; // трёхчленная формула реализации метода Ричардсона с чебышёвскими параметрами
 
-    // РѕРїРµСЂР°С‚РѕСЂС‹ РІРІРѕРґР°/РІС‹РІРѕРґР° РЎР›РђРЈ
+    // операторы ввода/вывода СЛАУ
     friend istream& operator >> (istream&, SLE&);
     friend ostream& operator << (ostream&, const SLE&);
 };

@@ -36,7 +36,7 @@ Matrix& Matrix::operator = (const Matrix& that)
 }
 
 size_t Matrix::getSize() const { return size; }
-double*& Matrix::operator [] (const size_t& r) { return M[r]; } // СЃ РёР·РјРµРЅРµРЅРёРµРј
+double*& Matrix::operator [] (const size_t& r) { return M[r]; } // с изменением
 double*& Matrix::get(const size_t& r) const { return M[r]; }
 
 
@@ -93,7 +93,7 @@ Matrix& Matrix::operator = (const initializer_list<Vector>& list)
     return *this;
 }
 
-Matrix Matrix::H() const // РЅР°С…РѕР¶РґРµРЅРёРµ РјР°С‚СЂРёС†С‹ РѕС‚СЂР°Р¶РµРЅРёР№
+Matrix Matrix::H() const // нахождение матрицы отражений
 {
     Matrix result(size);
     Matrix R = *this;
@@ -101,22 +101,22 @@ Matrix Matrix::H() const // РЅР°С…РѕР¶РґРµРЅРёРµ РјР°С‚СЂРёС†С‹ РѕС‚СЂР°Р¶РµРЅРё
         Vector t(size - i);
         for (size_t j = 0; j < size - i; j++)
             t[j] = R.get(j + i)[i];
-        Vector b(this->size - i, t); // РІРµРєС‚РѕСЂ b - РїРµСЂРІС‹Р№ СЃС‚РѕР»Р±РµС† РЅР°С€РµР№ РјР°С‚СЂРёС†С‹ СЂР°Р·РјРµСЂР° n - i, РіРґРµ i - РёС‚РµСЂР°С†РёСЏ РіР»Р°РІРЅРѕРіРѕ С†РёРєР»Р° for
+        Vector b(this->size - i, t); // вектор b - первый столбец нашей матрицы размера n - i, где i - итерация главного цикла for
         for (size_t j = 0; j < size - i; j++)
             if (j == 0)
                 t[j] = 1;
             else
                 t[j] = 0;
-        Vector c(size - i, t); // РІРµРєС‚РѕСЂ c - РµРґРёРЅРёС‡РЅРѕ-РєРѕРѕСЂРґРёРЅР°С‚РЅС‹Р№ РІРµРєС‚РѕСЂ
+        Vector c(size - i, t); // вектор c - единично-координатный вектор
         Vector temp = b - (b.abs() * c);
-        Vector w = (temp / sqrt(2 * (b * temp))); // РєР»СЋС‡РµРІРѕР№ РІРµРєС‚РѕСЂ, РёР· РєРѕС‚РѕСЂРѕРіРѕ СЃС‚СЂРѕРёС‚СЃСЏ РјР°С‚СЂРёС†Р° РѕС‚СЂР°Р¶РµРЅРёР№ РґР»СЏ РєР°Р¶РґРѕР№ РёС‚РµСЂР°С†РёРё
+        Vector w = (temp / sqrt(2 * (b * temp))); // ключевой вектор, из которого строится матрица отражений для каждой итерации
         Matrix Omega(size - i);
         for (size_t j = 0; j < size - i; j++)
             for (size_t k = 0; k < size - i; k++)
                 Omega[j][k] = w.get(j) * w.get(k);
         Matrix E(size - i);
-        Matrix EU = E - (2 * Omega); // РјР°С‚СЂРёС†Р° РѕС‚СЂР°Р¶РµРЅРёР№ РґР»СЏ РєР°Р¶РґРѕР№ РёС‚РµСЂР°С†РёРё
-        Matrix U(size); // РѕР±РѕР±С‰С‘РЅРЅР°СЏ РјР°С‚СЂРёС†Р° РѕС‚СЂР°Р¶РµРЅРёР№ (СЂР°Р·РјРµСЂР° n)
+        Matrix EU = E - (2 * Omega); // матрица отражений для каждой итерации
+        Matrix U(size); // обобщённая матрица отражений (размера n)
         for (size_t j = 0; j < size; j++)
             for (size_t k = 0; k < size; k++)
                 if (j >= i && k >= i) {
@@ -128,13 +128,13 @@ Matrix Matrix::H() const // РЅР°С…РѕР¶РґРµРЅРёРµ РјР°С‚СЂРёС†С‹ РѕС‚СЂР°Р¶РµРЅРё
                     else
                         U[j][k] = 0;
                 }
-        result = U * result; // С„РѕСЂРјРёСЂРѕРІР°РЅРёРµ РјР°С‚СЂРёС†С‹ РѕС‚СЂР°Р¶РµРЅРёР№ РІ РєР°Р¶РґРѕР№ РёС‚РµСЂР°С†РёРё С†РёРєР»Р°
+        result = U * result; // формирование матрицы отражений в каждой итерации цикла
         R = U * R;
     }
     return result;
 }
 
-// СЃС‚Р°РЅРґР°СЂС‚РЅС‹Рµ РѕРїРµСЂР°С‚РѕСЂС‹ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РјР°С‚СЂРёС†Р°РјРё
+// стандартные операторы для работы с матрицами
 Matrix Matrix::operator + (const Matrix& that) const
 {
     Matrix result(size);
@@ -264,7 +264,7 @@ bool Matrix::operator != (const Matrix& that) const
     return result;
 }
 
-void Matrix::swap(const size_t& i1, const size_t& i2) { // СЃРјРµРЅР° СЃС‚СЂРѕРє РјРµСЃС‚Р°РјРё
+void Matrix::swap(const size_t& i1, const size_t& i2) { // смена строк местами
     for (size_t i = 0; i < size; i++) {
         double temp = M[i1][i];
         M[i1][i] = M[i2][i];
@@ -272,7 +272,7 @@ void Matrix::swap(const size_t& i1, const size_t& i2) { // СЃРјРµРЅР° СЃС‚СЂРѕРє
     }
 }
 
-// РІС‹С‡РёСЃР»РµРЅРёРµ РѕРїСЂРµРґРµР»РёС‚РµР»СЏ РјР°С‚СЂРёС†С‹
+// вычисление определителя матрицы
 double Matrix::det() const {
     Matrix T = *this;
     double result = 1;
@@ -295,12 +295,12 @@ double Matrix::det() const {
     return result;
 }
 
-// РЅР°С…РѕР¶РґРµРЅРёРµ РѕР±СЂР°С‚РЅРѕР№ РјР°С‚СЂРёС†С‹ РјРµС‚РѕРґРѕРј Р–РѕСЂРґР°РЅР°-Р“Р°СѓСЃСЃР°
+// нахождение обратной матрицы методом Жордана-Гаусса
 Matrix Matrix::reflect() const
 {
     Matrix E(this->size);
     Matrix T = *this;
-    // РїСЂСЏРјРѕР№ С…РѕРґ РјРµС‚РѕРґР° Р“Р°СѓСЃСЃР°
+    // прямой ход метода Гаусса
     for (size_t i = 0; i < T.size - 1; i++) {
         if (!T.M[i][i])
             for (size_t j = i + 1; j < T.size; j++) {
@@ -318,7 +318,7 @@ Matrix Matrix::reflect() const
             }
         }
     }
-    // РѕР±СЂР°С‚РЅС‹Р№ С…РѕРґ РјРµС‚РѕРґР° Р“Р°СѓСЃСЃР°
+    // обратный ход метода Гаусса
     for (int i = T.size - 1; i > 0; i--) {
         for (int j = i - 1; j >= 0; j--) {
             double temp = T.M[j][i] / T.M[i][i];
@@ -384,7 +384,7 @@ double Matrix::sNorm() const
     return sqrt(result);
 }
 
-// РѕРїРµСЂР°С‚РѕСЂС‹ РІРІРѕРґР°/РІС‹РІРѕРґР° РјР°С‚СЂРёС†С‹
+// операторы ввода/вывода матрицы
 istream& operator >> (istream& in, Matrix& that)
 {
     for (size_t i = 0; i < that.getSize(); i++)
@@ -417,11 +417,11 @@ Vector operator * (const Matrix& that, const Vector& v)
     return result;
 }
 
-// РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РҐР°СѓСЃС…РѕР»РґРµСЂР° РґР»СЏ РїРµСЂРІРѕРіРѕ С€Р°РіР° QR-РјРµС‚РѕРґР°
+// преобразование Хаусхолдера для первого шага QR-метода
 Matrix Matrix::Hausholder() const
 {
     Matrix result(size);
-    double sum = 0; // РґР»СЏ РєРѕСЌС„С„РёС†РёРµРЅС‚Р° s
+    double sum = 0; // для коэффициента s
     for (size_t i = 1; i < size; i++)
         sum += M[i][0] * M[i][0];
     sum = sqrt(sum);
@@ -442,13 +442,13 @@ Matrix Matrix::Hausholder() const
     return result;
 }
 
-// РџРѕСЃС‚СЂРѕРµРЅРёРµ РјР°С‚СЂРёС†С‹ РѕС‚СЂР°Р¶РµРЅРёР№ РґР»СЏ РєР°Р¶РґРѕРіРѕ С€Р°РіР° QR-Р°Р»РіРѕСЂРёС‚РјР°
+// Построение матрицы отражений для каждого шага QR-алгоритма
 Matrix Matrix::QR_reflection() const
 {
     ofstream fout("output.txt", ios::app);
     fout << fixed << setprecision(8);
     Matrix Q(size), R = *this;
-    // РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ n - 1 СЂР°Р·
+    // выполняется n - 1 раз
     for (size_t i = 0; i < size - 1; i++)
     {
         double s = 0;
@@ -472,18 +472,18 @@ Matrix Matrix::QR_reflection() const
     return R * Q;
 }
 
-// QR РјРµС‚РѕРґ РЅР°С…РѕР¶РґРµРЅРёСЏ СЃРѕР±СЃС‚РІРµРЅРЅС‹С… С‡РёСЃРµР» Рё РІРµРєС‚РѕСЂРѕРІ РјР°С‚СЂРёС†С‹
+// QR метод нахождения собственных чисел и векторов матрицы
 void Matrix::QR(const double& e) const
 {
     ofstream fout("output.txt", ios::app);
     fout << fixed << setprecision(8);
     /*
-    * РџРµСЂРІС‹Р№ С€Р°Рі - РјР°С‚СЂРёС†Р° РҐРµСЃСЃРёРЅР±РµСЂРіР°, РїРѕР»СѓС‡Р°РµРјР°СЏ РІ СЂРµР·СѓР»СЊС‚Р°С‚Рµ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ РҐРµСЃСЃРµРЅР±РµСЂРіР°
+    * Первый шаг - матрица Хессинберга, получаемая в результате преобразования Хессенберга
     */
     Matrix B = (*this).Hausholder();
-    Vector result = B.diagV() /* Р·Р°РїРёСЃСЊ РІ СЂРµР·СѓР»СЊС‚Р°С‚ С‚РµРєСѓС‰РёС… РїСЂРёР±Р»РёР¶РµРЅРёР№ СЃРѕР±СЃС‚РІРµРЅРЅС‹С… Р·РЅР°С‡РµРЅРёР№ */, resn1(size);
+    Vector result = B.diagV() /* запись в результат текущих приближений собственных значений */, resn1(size);
     /*
-    * РЎР»РµРґСѓСЋС‰РёРµ С€Р°РіРё - РјР°С‚СЂРёС†С‹ РѕС‚СЂР°Р¶РµРЅРёР№
+    * Следующие шаги - матрицы отражений
     */
     size_t iterationCounter = 0;
     do
@@ -492,8 +492,8 @@ void Matrix::QR(const double& e) const
         B = B.QR_reflection();
         result = B.diagV();
         iterationCounter++;
-    } while ((result - resn1).infNorm() > e); // СѓСЃР»РѕРІРёРµ РєРѕРЅС†Р° РїСЂРѕС†РµСЃСЃР°
-    // РїРµС‡С‚Р°СЊ СЂРµР·СѓР»СЊС‚Р°С‚Р°
+    } while ((result - resn1).infNorm() > e); // условие конца процесса
+    // печтаь результата
     fout << "Iteration: " << iterationCounter << endl;
     fout << "Eigenvalues: " << endl;
     for (size_t i = 0; i < size; i++)
@@ -501,32 +501,32 @@ void Matrix::QR(const double& e) const
     fout << endl;
 }
 
-// РћР±СЂР°С‚РЅС‹Рµ РёС‚РµСЂР°С†РёРё СЃРѕ СЃРґРІРёРіРѕРј СЃ СЃРѕРѕС‚РЅРѕС€РµРЅРёРµРј Р СЌР»РµСЏ
+// Обратные итерации со сдвигом с соотношением Рэлея
 void Matrix::RQI(const double& e, const double& lambda_e) const
 {
     ofstream fout("output.txt", ios::app);
     fout << fixed << setprecision(8);
     /*
-    * РЁР°Рі 0: РїРѕРґР±РѕСЂ РІРµРєС‚РѕСЂР°, РµРІРєР»РёРґРѕРјР° РЅРѕСЂРјР° РєРѕС‚РѕСЂРѕРіРѕ СЂР°РІРЅР° РЅСѓР»СЋ
+    * Шаг 0: подбор вектора, евклидома норма которого равна нулю
     */
     Vector xkn1(size, 0);
     xkn1[0] = 1;
     /*
-    * РЁР°Рі 1: РґР»СЏ k = 1, 2, ... :
-    * 1.1: РІС‹С‡РёСЃР»РµРЅРёРµ ro = (A * xk, xk), РІ СЃР»СѓС‡Р°Рµ РїРµСЂРІРѕРіРѕ С€Р°РіР° СЌС‚Рѕ xkn1;
-    * 1.2: РІС‹С‡РёСЃР»РµРЅРёРµ yk РёР· СѓСЂР°РІРЅРµРЅРёСЏ (A - ro * E) * yk = xkn1;
-    * 1.3: РЅРѕСЂРјРёСЂРѕРІР°РЅРёРµ yk: xk = yk / ||yk||;
-    * 1.4: РїСЂРѕРІРµСЂРєР° ro РЅР° СЃС…РѕРґРёРјРѕСЃС‚СЊ Рё РїСЂРѕРІРµСЂРєР° РєРѕРЅС†Р° РїСЂРѕС†РµСЃСЃР°.
-    * (РёР· Р’РµСЂР¶Р±РёС†РєРѕРіРѕ)
-    * РќР° РґРµР»Рµ Р°Р»РіРѕСЂРёС‚Рј РїСЂРёС€Р»РѕСЃСЊ СЃР»РµРіРєР° РёР·РјРµРЅРёС‚СЊ...
+    * Шаг 1: для k = 1, 2, ... :
+    * 1.1: вычисление ro = (A * xk, xk), в случае первого шага это xkn1;
+    * 1.2: вычисление yk из уравнения (A - ro * E) * yk = xkn1;
+    * 1.3: нормирование yk: xk = yk / ||yk||;
+    * 1.4: проверка ro на сходимость и проверка конца процесса.
+    * (из Вержбицкого)
+    * На деле алгоритм пришлось слегка изменить...
     */
     Vector yk(size), xk(size);
     double ro = lambda_e, difference = e + 1;
     size_t iterationCount = 0;
-    while (difference > e) // СѓСЃР»РѕРІРёРµ РєРѕРЅС†Р° - РЅРѕСЂРјР° СЃРѕСЃРµРґРЅРёС… РїСЂРёР±Р»РёР¶РµРЅРёР№ СЃРѕР±СЃС‚РІРµРЅРЅС‹С… РІРµРєС‚РѕСЂРѕРІ
+    while (difference > e) // условие конца - норма соседних приближений собственных векторов
     {
         Matrix M = (*this - ro * Matrix(size));
-        // РµСЃР»Рё РјР°С‚СЂРёС†Р° РІС‹СЂРѕР¶РґРµРЅР°, С‚Рѕ РЅР°Р№РґРµРЅРѕ С‚РѕС‡РЅРѕРµ СЃРѕР±СЃС‚РІРµРЅРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ
+        // если матрица вырождена, то найдено точное собственное значение
         if (!M.det())
             break;
         SLE sle(M, xkn1);
@@ -537,7 +537,7 @@ void Matrix::RQI(const double& e, const double& lambda_e) const
         ro = (*this * xk) * xk;
         iterationCount++;
     }
-    // РїРµС‡Р°С‚СЊ СЂРµР·СѓР»СЊС‚Р°С‚Р°
+    // печать результата
     fout << "Iteration: " << iterationCount;
     if (!iterationCount)
         fout << " (The eigenvalue was guessed by the approximation)";

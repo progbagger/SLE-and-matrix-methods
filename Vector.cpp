@@ -73,7 +73,7 @@ Vector& Vector::operator = (const initializer_list<double>& list)
     return *this;
 }
 
-// РЅРёР¶Рµ РїСЂРёРІРµРґРµРЅС‹ СЃС‚Р°РЅРґР°СЂС‚РЅС‹Рµ РѕРїРµСЂР°С‚РѕСЂС‹ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РІРµРєС‚РѕСЂР°РјРё
+// ниже приведены стандартные операторы для работы с векторами
 double Vector::operator * (const Vector& that) const
 {
     double result = 0;
@@ -82,7 +82,7 @@ double Vector::operator * (const Vector& that) const
     return result;
 }
 
-// РєРѕРјРјСѓС‚Р°С‚РёРІРЅРѕСЃС‚СЊ РѕРїРµСЂР°С‚РѕСЂРѕРІ
+// коммутативность операторов
 Vector operator * (const double& a, const Vector& that)
 {
     Vector result(that.getSize());
@@ -188,7 +188,7 @@ bool Vector::operator == (const Vector& that) const
     return result;
 }
 
-// РЅРѕСЂРјР° РІРµРєС‚РѕСЂР° РЅР° Р±РµСЃРєРѕРЅРµС‡РЅРѕСЃС‚Рё
+// норма вектора на бесконечности
 double Vector::infNorm() const
 {
     double result = std::abs(V[0]);
@@ -198,7 +198,7 @@ double Vector::infNorm() const
     return result;
 }
 
-// РµРІРєР»РёРґРѕРІР° РЅРѕСЂРјР° РІРµРєС‚РѕСЂР°
+// евклидова норма вектора
 double Vector::euclidNorm() const
 {
     double result = 0;
@@ -207,7 +207,7 @@ double Vector::euclidNorm() const
     return sqrt(result);
 }
 
-// РѕРїРµСЂР°С‚РѕСЂС‹ РІРІРѕРґР° Рё РІС‹РІРѕРґР° РІРµРєС‚РѕСЂР°
+// операторы ввода и вывода вектора
 istream& operator >> (istream& in, Vector& that)
 {
     for (size_t i = 0; i < that.getSize(); i++)

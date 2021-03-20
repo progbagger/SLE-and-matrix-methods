@@ -34,14 +34,14 @@ SLE& SLE::operator = (const pair<Matrix, Vector>& p)
     return *this;
 }
 
-// РіРµС‚С‚РµСЂС‹
+// геттеры
 Vector SLE::c_getb() const { return b; }
 Vector& SLE::getb() { return b; }
 Matrix SLE::c_getM() const { return M; }
 Matrix& SLE::getM() { return M; }
 size_t SLE::getSize() const { return size; }
 
-// РѕРїРµСЂР°С‚РѕСЂС‹ РІРІРѕРґР°/РІС‹РІРѕРґР° РЎР›РђРЈ
+// операторы ввода/вывода СЛАУ
 istream& operator >> (istream& in, SLE& that)
 {
     for (size_t i = 0; i < that.getSize(); i++)
@@ -83,14 +83,14 @@ void SLE::iView()
     }
 }
 
-/* РџР РЇРњР«Р• РњР•РўРћР”Р« */
+/* ПРЯМЫЕ МЕТОДЫ */
 
-// СЂРµС€РµРЅРёРµ СЃРёСЃС‚РµРјС‹ РјРµС‚РѕРґРѕРј Р“Р°СѓСЃСЃР°
+// решение системы методом Гаусса
 Vector SLE::Gauss() const
 {
-    Matrix Mt = M; Vector bt = b; // С‡С‚РѕР±С‹ РЅРµ РёСЃРїРѕСЂС‚РёС‚СЊ РёСЃС…РѕРґРЅС‹Рµ
+    Matrix Mt = M; Vector bt = b; // чтобы не испортить исходные
     Vector result(size);
-    // РїСЂСЏРјРѕР№ С…РѕРґ
+    // прямой ход
     for (size_t i = 0; i < size - 1; i++)
     {
         if (!Mt[i][i])
@@ -113,7 +113,7 @@ Vector SLE::Gauss() const
             bt[j] -= bt[i] * temp;
         }
     }
-    // РЅР°С…РѕР¶РґРµРЅРёРµ РёРєСЃРѕРІ
+    // нахождение иксов
     for (int i = size - 1; i >= 0; i--)
     {
         result[i] = bt[i];
@@ -124,17 +124,17 @@ Vector SLE::Gauss() const
     return result;
 }
 
-// СЂРµС€РµРЅРёРµ РЎР›РђРЈ РјРµС‚РѕРґРѕРј РѕС‚СЂР°Р¶РµРЅРёР№
+// решение СЛАУ методом отражений
 Vector SLE::HR() const
 {
-    Matrix MM = M; Vector bb = b; // РґРµР»Р°РµРј РґРѕРї. СЃРёСЃС‚РµРјСѓ С‡С‚РѕР±С‹ РЅРµ РёСЃРїРѕСЂС‚РёС‚СЊ РёСЃС…РѕРґРЅСѓСЋ
+    Matrix MM = M; Vector bb = b; // делаем доп. систему чтобы не испортить исходную
     Vector result(size);
     for (size_t i = 0; i < result.getSize(); i++)
         result[i] = 0;
     Matrix H = MM.H();
-    // РїСЂРµРѕР±СЂР°Р·РѕРІС‹РІР°РµРј СЃРёСЃС‚РµРјСѓ, СѓРјРЅРѕР¶Р°СЏ РјР°С‚СЂРёС†Сѓ СЃРёСЃС‚РµРјС‹ Рё РІРµРєС‚РѕСЂ СЃРІРѕР±РѕРґРЅС‹С… С‡Р»РµРЅРѕРІ РЅР° РјР°С‚СЂРёС†Сѓ РѕС‚СЂР°Р¶РµРЅРёР№ СЃР»РµРІР°
+    // преобразовываем систему, умножая матрицу системы и вектор свободных членов на матрицу отражений слева
     MM = H * MM; bb = H * bb;
-    // РїРѕРёСЃРє "РёРєСЃРѕРІ"
+    // поиск "иксов"
     for (int i = this->size - 1; i >= 0; i--)
     {
         result[i] = bb[i];
@@ -145,20 +145,20 @@ Vector SLE::HR() const
     return result;
 }
 
-/* РРўР•Р РђР¦РРћРќРќР«Р• РњР•РўРћР”Р« */
+/* ИТЕРАЦИОННЫЕ МЕТОДЫ */
 
-// РњРµС‚РѕРґ Р“Р°СѓСЃСЃР°-Р—РµР№РґРµР»СЏ
+// Метод Гаусса-Зейделя
 void SLE::HZ(const double& e, const Vector& ee) const
 {
-    //e - С‚РѕС‡РЅРѕСЃС‚СЊ РІС‹С‡РёСЃР»РµРЅРёР№
+    //e - точность вычислений
     Vector result(size);
     SLE t = *this;
     Matrix D = t.M.diag(), L = -1 * t.M.lowerTriangle();
-    Matrix H = (D - L).reflect(); // РІС‹С‡РёСЃР»РµРЅРёРµ (D - L)^-1
-    Vector x0 = ee; // РЅР°С‡Р°Р»СЊРЅРѕРµ РїСЂРёР±Р»РёР¶РµРЅРёРµ, СЂР°РІРЅРѕРµ РІРµРєС‚РѕСЂСѓ СЃРІРѕР±РѕРґРЅС‹С… С‡Р»РµРЅРѕРІ РІ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРЅРѕР№ СЃРёСЃС‚РµРјРµ
-    result = x0 - H * ((c_getM() * x0) - c_getb()); // РїРµСЂРІР°СЏ РёС‚РµСЂР°С†РёСЏ
+    Matrix H = (D - L).reflect(); // вычисление (D - L)^-1
+    Vector x0 = ee; // начальное приближение, равное вектору свободных членов в преобразованной системе
+    result = x0 - H * ((c_getM() * x0) - c_getb()); // первая итерация
     size_t m = 1;
-    while ((result - x0).infNorm() > e) // СѓСЃР»РѕРІРёРµ РєРѕРЅС†Р° - РЅРѕСЂРјР° "СЃРѕСЃРµРґРЅРёС…" РІС‹С‡РёСЃР»РµРЅРЅС‹С… СЂРµС€РµРЅРёР№ РЅР° Р±РµСЃРєРѕРЅРµС‡РЅРѕСЃС‚Рё РґРѕР»Р¶РЅР° Р±С‹С‚СЊ РјРµРЅСЊС€Рµ РёР»Рё СЂР°РІРЅР° С‚РѕС‡РЅРѕСЃС‚Рё
+    while ((result - x0).infNorm() > e) // условие конца - норма "соседних" вычисленных решений на бесконечности должна быть меньше или равна точности
     {
         x0 = result;
         result = x0 - (H * ((c_getM() * x0) - c_getb()));
@@ -169,17 +169,17 @@ void SLE::HZ(const double& e, const Vector& ee) const
     fout.close();
 }
 
-// РњРµС‚РѕРґ РЇРєРѕР±Рё
+// Метод Якоби
 void SLE::Jacobi(const double& e, const Vector& ee) const
 {
     ofstream fout("output.txt", ios::app);
     fout << fixed << setprecision(8);
     Vector result(size);
-    Matrix H = (c_getM().diag()).reflect(); // РјР°С‚СЂРёС†Р° D^-1
-    Vector x0 = ee; // РЅР°С‡Р°Р»СЊРЅС‹Р№ РІРµРєС‚РѕСЂ
+    Matrix H = (c_getM().diag()).reflect(); // матрица D^-1
+    Vector x0 = ee; // начальный вектор
     result = x0 - H * ((c_getM() * x0) - c_getb());
     size_t m = 1;
-    while ((result - x0).infNorm() > e) { // СѓСЃР»РѕРІРёРµ РєРѕРЅС†Р°
+    while ((result - x0).infNorm() > e) { // условие конца
         x0 = result;
         result = x0 - H * (c_getM() * x0 - c_getb());
         m++;
@@ -188,7 +188,7 @@ void SLE::Jacobi(const double& e, const Vector& ee) const
     fout.close();
 }
 
-// РњРµС‚РѕРґ СЃРѕРїСЂСЏР¶С‘РЅРЅС‹С… РіСЂР°РґРёРµРЅС‚РѕРІ
+// Метод сопряжённых градиентов
 void SLE::SGrd(const double& e, const Vector& ee) const
 {
     ofstream fout("output.txt", ios::app);
@@ -196,24 +196,24 @@ void SLE::SGrd(const double& e, const Vector& ee) const
     Vector result = ee, x0 = ee;
     size_t m = 0;
     SLE t = *this;
-    Vector r = (t.getM() * x0) - t.getb(), g = r; // Р·Р°РґР°С‘Рј РЅР°С‡Р°Р»СЊРЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ РІРµРєС‚РѕСЂР° РЅРµРІСЏР·РєРё Рё РіСЂР°РґРёРµРЅС‚Р°
-    if (!g) // РїСЂРѕРІРµСЂРєР° РЅР° РЅРµ Р±Р°Р·РёСЃРЅРѕСЃС‚СЊ РІРµРєС‚РѕСЂР° РіСЂР°РґРёРµРЅС‚Р°
+    Vector r = (t.getM() * x0) - t.getb(), g = r; // задаём начальные значения вектора невязки и градиента
+    if (!g) // проверка на не базисность вектора градиента
     {
         fout << "m = " << m << endl << "x = " << result;
         fout.close();
         return;
     }
-    double a = (r * g) / ((t.getM() * g) * g); // РєРѕСЌС„С„. РґР»СЏ РІС‹С‡РёСЃР»РµРЅРёСЏ РІРµРєС‚РѕСЂР° x
-    result = x0 - (a * g); r = r - (a * (t.getM() * g)); // РїРµСЂРІС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
+    double a = (r * g) / ((t.getM() * g) * g); // коэфф. для вычисления вектора x
+    result = x0 - (a * g); r = r - (a * (t.getM() * g)); // первые значения
     ++m;
-    if (!r) // РїСЂРѕРІРµСЂРєР°...
+    if (!r) // проверка...
     {
         fout << "m = " << m << endl << "x = " << result;
         fout.close();
         return;
     }
-    double gamma; // РєРѕСЌС„С„. РґР»СЏ РІС‹С‡РёСЃР»РµРЅРёСЏ РіСЂР°РґРёРµРЅС‚Р°
-    while ((result - x0).infNorm() > e) // РѕСЃРЅРѕРІРЅРѕР№ С†РёРєР» РїСЂРѕРіСЂР°РјРјС‹
+    double gamma; // коэфф. для вычисления градиента
+    while ((result - x0).infNorm() > e) // основной цикл программы
     {
         x0 = result;
         gamma = ((t.getM() * r) * g) / ((t.getM() * g) * g);
@@ -227,7 +227,7 @@ void SLE::SGrd(const double& e, const Vector& ee) const
     fout.close();
 }
 
-// РјРµС‚РѕРґ Р РёС‡Р°СЂРґСЃРѕРЅР° СЃ С‡РµР±С‹С€С‘РІСЃРєРёРјРё РїР°СЂР°РјРµС‚СЂР°РјРё (С‚СЂС‘С…С‡Р»РµРЅРЅР°СЏ С„РѕСЂРјСѓР»Р°)
+// метод Ричардсона с чебышёвскими параметрами (трёхчленная формула)
 void SLE::Rchd3(const double& e, const Vector& ee, const double& alpha, const double& beta) const
 {
     ofstream fout("output.txt", ios::app);
@@ -240,15 +240,15 @@ void SLE::Rchd3(const double& e, const Vector& ee, const double& alpha, const do
     catch (int) {
         return;
     }
-    /* Р—Р°РґР°С‘Рј РЅР°С‡Р°Р»СЊРЅС‹Рµ РІРµРєС‚РѕСЂС‹ Рё РєРѕСЌС„С„РёС†РёРµРЅС‚С‹ */
-    Vector xkn1 = ee; // РІРµРєС‚РѕСЂ x(k - 1)
-    double w1 = -1 * (beta - alpha) / (beta + alpha); // РЅР°С‡Р°Р»СЊРЅС‹Р№ РєРѕСЌС„С„РёС†РёРµРЅС‚ w
-    size_t m = 0; // РЅРѕРјРµСЂ РёС‚РµСЂР°С†РёРё
-    /* РїРµСЂРІР°СЏ РёС‚РµСЂР°С†РёСЏ */
-    Vector xk = xkn1 - ((2 / (beta + alpha)) * ((c_getM() * xkn1) - c_getb())); // РІРµРєС‚РѕСЂ xk, РїРµСЂРІР°СЏ РёС‚РµСЂР°С†РёСЏ
+    /* Задаём начальные векторы и коэффициенты */
+    Vector xkn1 = ee; // вектор x(k - 1)
+    double w1 = -1 * (beta - alpha) / (beta + alpha); // начальный коэффициент w
+    size_t m = 0; // номер итерации
+    /* первая итерация */
+    Vector xk = xkn1 - ((2 / (beta + alpha)) * ((c_getM() * xkn1) - c_getb())); // вектор xk, первая итерация
     ++m;
-    double wk = w1, wkp1 = w1; // РІС‹С‡РёСЃР»РµРЅРёРµ РєР°Р¶РґРѕРіРѕ РЅРѕРІРѕРіРѕ w С‚СЂРµР±СѓРµС‚ w1 Рё РїСЂРµРґС‹РґСѓС‰РµРіРѕ w
-    /* Р Р°Р±РѕС‡РёР№ С†РёРєР» */
+    double wk = w1, wkp1 = w1; // вычисление каждого нового w требует w1 и предыдущего w
+    /* Рабочий цикл */
     while ((xk - xkn1).infNorm() > e)
     {
         wkp1 = 1 / ((2 * (1 / w1)) - wk);
@@ -258,7 +258,7 @@ void SLE::Rchd3(const double& e, const Vector& ee, const double& alpha, const do
         wk = wkp1;
         ++m;
     }
-    /* РїРµС‡Р°С‚СЊ СЂРµР·СѓР»СЊС‚Р°С‚Р° */
+    /* печать результата */
     fout << "m = " << m << endl << "x = " << result;
     fout.close();
 }
