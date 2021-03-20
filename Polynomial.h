@@ -3,8 +3,8 @@
 
 class Polynomial
 {
-	size_t deg; // степень многочлена
-	Vector p; // сам многочлен
+	size_t deg; // СЃС‚РµРїРµРЅСЊ РјРЅРѕРіРѕС‡Р»РµРЅР°
+	Vector p; // СЃР°Рј РјРЅРѕРіРѕС‡Р»РµРЅ
 
 public:
 
@@ -24,7 +24,7 @@ public:
 	size_t calculateDeg() const;
 	void shrink();
 
-	// операторы для работы с полиномами
+	// РѕРїРµСЂР°С‚РѕСЂС‹ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РїРѕР»РёРЅРѕРјР°РјРё
 	Polynomial operator + (const Polynomial&) const;
 	Polynomial& operator += (const Polynomial&);
 	Polynomial operator - (const Polynomial&) const;
@@ -32,23 +32,21 @@ public:
 	Polynomial operator * (const Polynomial&) const;
 	Polynomial& operator *= (const Polynomial&);
 
-	Polynomial df() const; // производный многочлен
+	Polynomial df() const; // РїСЂРѕРёР·РІРѕРґРЅС‹Р№ РјРЅРѕРіРѕС‡Р»РµРЅ
 
-	double operator () (const double&) const; // значение полинома в точке
+	double operator () (const double&) const; // Р·РЅР°С‡РµРЅРёРµ РїРѕР»РёРЅРѕРјР° РІ С‚РѕС‡РєРµ
 
-	// операторы ввода/вывода полинома
+	// РѕРїРµСЂР°С‚РѕСЂС‹ РІРІРѕРґР°/РІС‹РІРѕРґР° РїРѕР»РёРЅРѕРјР°
 	friend istream& operator >> (istream&, Polynomial&);
 	friend ostream& operator << (ostream&, const Polynomial&);
 
-	// операторы умножения и деления многочлена на константу
+	// РѕРїРµСЂР°С‚РѕСЂС‹ СѓРјРЅРѕР¶РµРЅРёСЏ Рё РґРµР»РµРЅРёСЏ РјРЅРѕРіРѕС‡Р»РµРЅР° РЅР° РєРѕРЅСЃС‚Р°РЅС‚Сѓ
 	friend Polynomial operator * (const double&, const Polynomial&);
 	Polynomial& operator *= (const double&);
 	Polynomial operator / (const double&);
 	Polynomial& operator /= (const double&);
 };
 
-// функции создания интерполяционного многочлена
+// С„СѓРЅРєС†РёРё СЃРѕР·РґР°РЅРёСЏ РёРЅС‚РµСЂРїРѕР»СЏС†РёРѕРЅРЅРѕРіРѕ РјРЅРѕРіРѕС‡Р»РµРЅР°
 Polynomial int_L(const Vector&, const Vector&);
 Polynomial int_N(const Vector&, const Vector&);
-
-double error(const Polynomial&, const Polynomial);
