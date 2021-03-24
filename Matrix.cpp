@@ -401,7 +401,6 @@ ostream& operator << (ostream& out, const Matrix& that)
             out << that.get(i)[j] << '\t';
         out << endl;
     }
-    out << endl;
     return out;
 }
 
