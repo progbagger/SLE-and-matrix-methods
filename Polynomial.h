@@ -50,3 +50,5 @@ public:
 // функции создания интерполяционного многочлена
 Polynomial int_L(const Vector&, const Vector&);
 Polynomial int_N(const Vector&, const Vector&);
+
+Vector Cheb(const size_t&);
