@@ -213,7 +213,7 @@ ostream& operator << (ostream& out, const Polynomial& pol)
 				out << "x^" << i;
 		}
 	}
-	out << endl << endl;
+	out << endl;
 	return out;
 }
 
@@ -239,6 +239,38 @@ Polynomial int_L(const Vector& x, const Vector& y)
 Polynomial int_N(const Vector& x, const Vector& y)
 {
 	Polynomial result(x.getSize() - 1);
+	/*
+	* Составляем вектор разделённых разностей,
+	* необходимых для вычисления полинома
+	*/
+	Vector calculations(y.getSize() + 1, 0);
+	calculations[0] = y.get(0);
+	for (size_t i = 1; i < calculations.getSize(); i++)
+		for (size_t k = 0; k <= i; k++)
+		{
+			double denominator = 1;
+			for (size_t j = 0; j <= i; j++)
+				if (k != j)
+					denominator *= x.get(k) - x.get(j);
+			calculations[i] += y.get(k) / denominator;
+		}
+	/*
+	* Составление самого полинома
+	*/
+	for (size_t i = 0; i <= x.getSize() - 1; i++)
+	{
+		Polynomial w(0, { 1 });
+		for (size_t j = 0; j < i; j++)
+			w *= Polynomial(1, { -1 * x.get(j), 1 });
+		result += calculations.get(i) * w;
+	}
+	return result;
+}
 
+Vector Cheb(const size_t& n) // построение узлов Чебышёва для задания 1.3
+{
+	Vector result(n);
+	for (size_t i = 1; i <= result.getSize(); i++)
+		result[i - 1] = cos((((2.0 * i) - 1.0) / (2.0 * n)) * acos(-1.0));
 	return result;
 }
