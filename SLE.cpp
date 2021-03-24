@@ -61,7 +61,6 @@ ostream& operator << (ostream& out, const SLE& that)
             out << that.c_getM().get(i)[j] << '\t';
         out << that.c_getb().get(i) << endl;
     }
-    out << endl;
     return out;
 }
 
