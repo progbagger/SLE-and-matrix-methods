@@ -220,7 +220,7 @@ ostream& operator << (ostream& out, const Vector& that)
     out << "(";
     for (size_t i = 0; i < that.getSize() - 1; i++)
         out << that.get(i) << ", ";
-    out << that.get(that.getSize() - 1) << ')' << endl << endl;
+    out << that.get(that.getSize() - 1) << ')' << endl;
     return out;
 }
 
