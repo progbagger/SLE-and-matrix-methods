@@ -2,6 +2,7 @@
 #include <iomanip>
 #include "SLE.h"
 #include "Polynomial.h"
+#define max(a, b) (a > b) ? a : b
 using namespace std;
 
 ifstream fin("input.txt");
@@ -10,10 +11,10 @@ ofstream fout("output.txt");
 /*
 * --------------------------------------------------------Список методов--------------------------------------------------------
 * Решение СЛАУ и поиск собственных значений и векторов:
-* --- Прямые методы решения СЛАУ (применяются к объектам типа SLE) ---
+* --- Прямые методы решения СЛАУ (применяются к объектам типа SLE)
 * - метод Гаусса: Gauss()
 * - метод отражений: HR()
-* --- Итерационные методы решения СЛАУ (применяются к объектам типа SLE) ---
+* --- Итерационные методы решения СЛАУ (применяются к объектам типа SLE)
 * - метод Зейделя: HZ(const double& - точность, const Vector& - начальное приближение)
 * - метод Якоби: Jacobi(const double& - точность, const Vector& - начальное приближение)
 * - метод сопряжённых градиентов: SGrd(const double& - точность, const Vector& - начальное приближение)
@@ -25,6 +26,8 @@ ofstream fout("output.txt");
 * Численный анализ:
 * --- Интерполирование:
 * - Интерполяционный многочлен Лагранжа: int_L(const Vector& - иксы узлов, const Vector& - игреки узлов)
+* - Интерполяционный многочлен Ньютона: int_N(const Vector& - иксы узлов, const Vector& - игреки узлов)
+* - Построение узлов Чебышёва: Vector Cheb(const size_t& - необходимое количество узлов)
 */
 
 int main()
@@ -108,6 +111,7 @@ int main()
 
     // Узлы Чебышёва
 
+    /*
     double a = -1, b = 1;
     size_t n = 4;
     Vector x{ -1.0, -1.0 / 3.0, 1.0 / 3.0, 1.0 };
@@ -124,6 +128,41 @@ int main()
     // полином Лагранжа по узлам Чебышёва
     Polynomial CL = int_L(xCh, yCh);
     fout << "Chebyshev nodes:\nx = " << xCh << "y = " << yCh << "L(x) = " << CL;
+    // поиск экстремума ошибки
+    // Так как в программе нельзя задать явно многочлен, одним из слагаемых которого
+    // является экспонента, придётся отдельно считать производную как сумму
+    Polynomial dfEL = EL.df(), dfCL = CL.df();
+    double ac = 0.6, bc = 0.8, eps = 0.000000001;
+    // точность 10^-9 удобна для нас, поскольку требуемая точность вывода 8 знаков после запятой
+    // интервал найден по графику
+    double result = 0, result_prev = 0;
+    // для равноотстоящих узлов
+    do
+    {
+        result_prev = result;
+        result = (ac + bc) / 2;
+        if ((dfEL(result) - exp(result)) * (dfEL(ac) - exp(ac)) <= 0)
+            bc = result;
+        else if ((dfEL(result) - exp(result)) * (dfEL(bc) - exp(bc)) <= 0)
+            ac = result;
+    } while (abs(result - result_prev) >= eps);
+    fout << "x = " << result << endl;
+    fout << "Maximum for equidistant nodes: " << abs(exp(result) - EL(result)) << endl;
+    // для узлов Чебышёва
+    ac = 0.6, bc = 0.8;
+    result = result_prev = 0;
+    do
+    {
+        result_prev = result;
+        result = (ac + bc) / 2;
+        if ((dfCL(result) - exp(result)) * (dfCL(ac) - exp(ac)) <= 0)
+            bc = result;
+        else if ((dfCL(result) - exp(result)) * (dfCL(bc) - exp(bc)) <= 0)
+            ac = result;
+    } while (abs(result - result_prev) >= eps);
+    fout << "x = " << result << endl;
+    fout << "Maximum for Chebyshev nodes: " << abs(exp(result) - CL(result)) << endl;
+    */
     
     fin.close();
     fout.close();
