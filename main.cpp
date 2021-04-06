@@ -146,8 +146,21 @@ int main()
         else if ((dfEL(result) - exp(result)) * (dfEL(bc) - exp(bc)) <= 0)
             ac = result;
     } while (abs(result - result_prev) >= eps);
-    fout << "x = " << result << endl;
-    fout << "Maximum for equidistant nodes: " << abs(exp(result) - EL(result)) << endl;
+    // проверим также края отрезка
+    double xres = result, yres = abs(exp(xres) - EL(xres));
+    double ayres = abs(exp(a) - EL(a)), byres = abs(exp(b) - EL(b));
+    if (yres < ayres)
+    {
+        yres = ayres;
+        xres = a;
+    }
+    if (yres < byres)
+    {
+        yres = byres;
+        xres = b;
+    }
+    fout << "x = " << xres << endl;
+    fout << "Maximum for equidistant nodes: " << yres << endl;
     // для узлов Чебышёва
     ac = 0.6, bc = 0.8;
     result = result_prev = 0;
@@ -160,10 +173,28 @@ int main()
         else if ((dfCL(result) - exp(result)) * (dfCL(bc) - exp(bc)) <= 0)
             ac = result;
     } while (abs(result - result_prev) >= eps);
-    fout << "x = " << result << endl;
-    fout << "Maximum for Chebyshev nodes: " << abs(exp(result) - CL(result)) << endl;
+    // проверим также края отрезка
+        // проверим также края отрезка
+    xres = result; yres = abs(exp(xres) - CL(xres));
+    ayres = abs(exp(a) - CL(a)); byres = abs(exp(b) - CL(b));
+    if (yres < ayres)
+    {
+        yres = ayres;
+        xres = a;
+    }
+    if (yres < byres)
+    {
+        yres = byres;
+        xres = b;
+    }
+    fout << "x = " << xres << endl;
+    fout << "Maximum for Chebyshev nodes: " << yres << endl;
     */
-    
+
+    /*
+    * Численное интегрирование
+    */
+        
     fin.close();
     fout.close();
     return 0;
