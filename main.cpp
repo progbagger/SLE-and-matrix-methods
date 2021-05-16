@@ -3,6 +3,7 @@
 #include "SLE.h"
 #include "Polynomial.h"
 #define max(a, b) (a > b) ? a : b
+#define EPS 0.0000000001
 using namespace std;
 
 ifstream fin("input.txt");
@@ -77,7 +78,7 @@ int main()
 
     ////////////////////////////////////////////////////////////
 
-    // Интерполяционный многочлен Лагранжа
+    // 1.1
 
     /*
     double a, b;
@@ -93,7 +94,7 @@ int main()
     fout << "f(" << x0 << ") = " << Lagr(x0) << endl << "f(x) = " << Lagr;
     */
 
-    // Интерполяционный многочлен Ньютона
+    // 1.2
 
     /*
     double a, b;
@@ -109,7 +110,7 @@ int main()
     fout << "f(" << x0 << ") = " << Newt(x0) << endl << "f(x) = " << Newt;
     */
 
-    // Узлы Чебышёва
+    // 1.3
 
     /*
     double a = -1, b = 1;
@@ -194,7 +195,53 @@ int main()
     /*
     * Численное интегрирование
     */
-        
+
+    // 2.1
+    
+    /*
+    double a = 0, b = 1;
+    size_t n1 = 20, n2 = 50, n3 = 100;
+    // центральные прямоугольники
+    fout << "n = " << n1 << "\tI(x) = " << mid_rect(n1, a, b, fu1) << endl;
+    fout << "n = " << n2 << "\tI(x) = " << mid_rect(n2, a, b, fu1) << endl;
+    fout << "n = " << n3 << "\tI(x) = " << mid_rect(n3, a, b, fu1) << endl;
+    fout << endl;
+
+    // трапеции
+    fout << "n = " << n1 << "\tI(x) = " << trapecia(n1, a, b, fu1) << endl;
+    fout << "n = " << n2 << "\tI(x) = " << trapecia(n2, a, b, fu1) << endl;
+    fout << "n = " << n3 << "\tI(x) = " << trapecia(n3, a, b, fu1) << endl;
+    fout << endl;
+
+    // Симпсона
+    fout << "n = " << n1 << "\tI(x) = " << Simpson(n1, a, b, fu1) << endl;
+    fout << "n = " << n2 << "\tI(x) = " << Simpson(n2, a, b, fu1) << endl;
+    fout << "n = " << n3 << "\tI(x) = " << Simpson(n3, a, b, fu1) << endl;
+    */
+
+    // 2.2
+
+    double a, b; // концы отрезка
+    fin >> a >> b;
+    size_t n; // кол-во узлов
+    fin >> n;
+
+    fout << "2 узла:\t"; Gaussian(EPS, 2, a, b, fu1);
+    fout << "3 узла:\t"; Gaussian(EPS, 3, a, b, fu1);
+    fout << "5 узлов:\t"; Gaussian(EPS, 5, a, b, fu1);
+
+    // 3.1
+
+    /*
+    double a, b; // концы отрезка
+    fin >> a >> b;
+
+    pair<size_t, double> method = dichotomy(EPS, a, b, fu2);
+    fout << "Метод дихотомии\n" << "m = " << method.first << endl << "x = " << method.second << endl << endl;
+    method = newt(EPS, a, b, fu2, dfu2);
+    fout << "Метод Ньютона\n" << "m = " << method.first << endl << "x = " << method.second << endl << endl;
+    */
+    
     fin.close();
     fout.close();
     return 0;
