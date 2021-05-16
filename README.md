@@ -1,17 +1,29 @@
 # Прямые методы решения СЛАУ - в SLE.h и SLE.cpp
-1) Метод Гаусса: Vector SLE::Gauss()
-2) Метод отражений: Vector SLE::HR()
+* Метод Гаусса: Vector SLE::Gauss()
+* Метод отражений: Vector SLE::HR()
 # Итерационные методы решения СЛАУ - в SLE.h и SLE.cpp
-1) Метод Зейделя: void SLE::HZ(const double&, const Vector&)
-2) Метод Якоби: void SLE::Jacobi(const double&, const Vector&)
-3) Метод сопряжённых градиентов: void SLE::SGrd(const double&, const Vector&);
-4) Трёхчленная формула реализации метода Ричардсона с чебышёвскими параметрами: void SLE::Rchd3(const double&, const Vector&, const double&, const double&)
+* Метод Зейделя: void SLE::HZ(const double&, const Vector&)
+* Метод Якоби: void SLE::Jacobi(const double&, const Vector&)
+* Метод сопряжённых градиентов: void SLE::SGrd(const double&, const Vector&);
+* Трёхчленная формула реализации метода Ричардсона с чебышёвскими параметрами: void SLE::Rchd3(const double&, const Vector&, const double&, const double&)
 # Методы поиска собственных значений - в Matrix.h и Matrix.cpp
-1) QR-метод: void Matrix::QR(const double&)
-2) Метод обратных итераций со сдвигом с соотношением Рэлея: void Matrix::RQI(const double&, const double&)
+* QR-метод: void Matrix::QR(const double&)
+* Метод обратных итераций со сдвигом с соотношением Рэлея: void Matrix::RQI(const double&, const double&)
 # Методы численного анализа - в Polynomial.h и Polynomial.cpp
-1) Вывод и ввод полинома осуществляются через операторы << и >> соответственно
-2) Значение полинома в точке вычисляется с помощью оператора ()
-3) Построение полинома Лагранжа в данных узлах и их значениях: Polynomial Polynomial::int_L(const Vector& - узлы, const Vector& - значения в узлах)
-4) Построение полинома Ньютона в данных узлах и их значениях: Polynomial Polynomial::int_N(const Vector& - узлы, const Vector& - значения в узлах)
-5) Построение узлов Чебышёва: Vector Cheb(const size_t& - количество необходимых узлов)
+## Интерполирование
+* Вывод и ввод полинома осуществляются через операторы << и >> соответственно
+* Значение полинома в точке вычисляется с помощью оператора ()
+* Построение полинома Лагранжа в данных узлах и их значениях: Polynomial Polynomial::int_L(const Vector& - узлы, const Vector& - значения в узлах)
+* Построение полинома Ньютона в данных узлах и их значениях: Polynomial Polynomial::int_N(const Vector& - узлы, const Vector& - значения в узлах)
+* Построение узлов Чебышёва: Vector Cheb(const size_t& - количество необходимых узлов)
+## Численное интегрирование
+* Vector Vector steady_grid(const size_t&, const double&, const double&) - создание равномерной сетки
+* double mid_rect(const size_t& - размерность равномерной сетки, const double& - левая граница отрезка, const double& - правая граница отрезка, double (*)(const double&) - данная функция) - формула центральных прямоугольников
+* double trapecia(const size_t&, const double&, const double&, double (*)(const double&)) - формула трапеций
+* double Simpson(const size_t&, const double&, const double&, double (*)(const double&)) - формула Симпсона
+* void Gaussian(const double& - точность вычислений n, const size_t&, const double&, const double&, double (*)(const double&)) - квадратурная формула Гаусса на n узлах
+  * Polynomial Legendre(const size_t&) - построение полинома Лежандра
+## Решение нелинейных уравнений
+* pair<size_t, double> dichotomy(const double&, const double&, const double&, double (*)(const double&)) - метод дихотомии
+* pair<size_t, double> newt(const double&, const double&, const double&, double (*)(const double&), double (*)(const double&)) - метод Ньютона
+  * Также имеются перегруженные версии данной функции, которые принимают начальное приближение и вместо указателей на функции используют в качестве аргументов полиномы
