@@ -14,7 +14,7 @@ public:
 
 	Polynomial& operator = (const Polynomial&);
 
-	Polynomial(const size_t&, const Vector&);
+	Polynomial(const Vector&);
 	Polynomial(const size_t&);
 
 	size_t getSize() const;
@@ -52,3 +52,25 @@ Polynomial int_L(const Vector&, const Vector&);
 Polynomial int_N(const Vector&, const Vector&);
 
 Vector Cheb(const size_t&);
+
+// функции численного интегрирования
+
+Vector steady_grid(const size_t&, const double&, const double&);
+
+double mid_rect(const size_t&, const double&, const double&, double (*)(const double&));
+double trapecia(const size_t&, const double&, const double&, double (*)(const double&));
+double Simpson(const size_t&, const double&, const double&, double (*)(const double&));
+
+double fu1(const double&); // для задания 2
+
+double fu2(const double&); // для задания 3
+double dfu2(const double&);
+
+void Gaussian(const double&, const size_t&, const double&, const double&, double (*)(const double&));
+
+Polynomial Legendre(const size_t&); // построение полинома Лежандра степени n
+
+pair<size_t, double> dichotomy(const double&, const double&, const double&, double (*)(const double&));
+pair<size_t, double> newt(const double&, const double&, const double&, double (*)(const double&), double (*)(const double&));
+pair<size_t, double> newt(const double&, const double&, const double&, double (*)(const double&), double (*)(const double&), const double&); // версия с начальным приближением
+pair<size_t, double> newt(const double&, const double&, const double&, Polynomial&, Polynomial&, const double&);
