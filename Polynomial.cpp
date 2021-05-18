@@ -140,6 +140,14 @@ Polynomial Polynomial::df() const
 	result.shrink();
 	return result;
 }
+Polynomial Polynomial::Df() const
+{
+	Polynomial result(this->getSize() + 1);
+	for (size_t i = 1; i <= this->getSize() + 1; i++)
+		result[i] = this->get(i - 1) / i;
+	result.shrink();
+	return result;
+}
 
 double Polynomial::operator () (const double& x) const
 {
@@ -387,7 +395,7 @@ pair<size_t, double> dichotomy(const double& eps, const double& a, const double&
 // метод Ньютона решения нелинейного уравнения f(x) = 0
 pair<size_t, double> newt(const double& eps, const double& a, const double& b, double (*function)(const double&), double (*dfunction)(const double&))
 {
-	double result = (a + b) / 2, presult = 0, ac = a, bc = b;
+	double result = (a + b) / 2, presult = 0;
 	size_t counter = 0;
 	if (!function(result))
 		goto ret;
@@ -402,9 +410,9 @@ ret:
 	return ans;
 }
 
-pair<size_t, double> newt(const double& eps, const double& a, const double& b, double (*function)(const double&), double (*dfunction)(const double&), const double& x0)
+pair<size_t, double> newt(const double& eps, double (*function)(const double&), double (*dfunction)(const double&), const double& x0)
 {
-	double result = x0, presult = 0, ac = a, bc = b;
+	double result = x0, presult = 0;
 	size_t counter = 0;
 	if (!function(result))
 		goto ret;
@@ -419,9 +427,9 @@ ret:
 	return ans;
 }
 
-pair<size_t, double> newt(const double& eps, const double& a, const double& b, Polynomial& function, Polynomial& dfunction, const double& x0)
+pair<size_t, double> newt(const double& eps, Polynomial& function, Polynomial& dfunction, const double& x0)
 {
-	double result = x0, presult = 0, ac = a, bc = b;
+	double result = x0, presult = 0;
 	size_t counter = 0;
 	if (!function(result))
 		goto ret;
@@ -439,6 +447,8 @@ ret:
 // квадратурная формула Гаусса
 void Gaussian(const double& eps, const size_t& n, const double& a, const double& b, double (*function)(const double&))
 {
+	fstream fout("output.txt", ios::app);
+	fout << fixed << setprecision(8);
 	double result = 0;
 	Polynomial result_pol;
 	// найдём узлы - корни многочлена Лежандра n-й степени
@@ -449,14 +459,18 @@ void Gaussian(const double& eps, const size_t& n, const double& a, const double&
 		// начальное приближение для i-го корня
 		x[i] = cos((acos(-1) * (4 * i - 1)) / (4 * n + 2));
 		// поиск самого корня
-		x[i] = newt(eps, a, b, L, dL, x[i]).second;
+		x[i] = newt(eps, L, dL, x[i]).second;
 	}
-	// перераспределение узлов на нужный отрезок
-	if (!(a == -1 && b == 1))
-		for (size_t i = 0; i < n; i++)
-			x[i] = a + ((x[i] + 1) * (a - b)) / 2;
 	// подсчёт весов квадратурной формулы
 	for (size_t i = 0; i < n; i++)
 		c[i] = 2 / ((1 - x[i] * x[i]) * dL(x[i]) * dL(x[i]));
-
+	// сама квадратурная формула
+	for (size_t i = 0; i < n; i++)
+		result += c[i] * function((a + b) / 2 + ((b - a) / 2) * x[i]);
+	result *= ((b - a) / 2);
+	Vector y(n, 0); // вектор значений функции в узлах
+	for (size_t i = 0; i < n; i++)
+		y[i] = function(x[i]);
+	fout << "Узлы:\n" << x << "Значения функции в узлах:\n" << y << "Веса квадратурной формулы:\n" << c << "Результат = " << result << endl << endl;
+	fout.close();
 }
