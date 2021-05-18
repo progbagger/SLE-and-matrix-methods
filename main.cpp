@@ -34,7 +34,7 @@ ofstream fout("output.txt");
 int main()
 {
     fout << fixed << setprecision(8); // установка точности на 8 знаков после запятой
-
+    
     /*//////////////////////////////////////////////////////////
     * //////////////////////////////////////////////////////////
     * //////////////////////////////////////////////////////////
@@ -221,14 +221,14 @@ int main()
 
     // 2.2
 
+    /*
     double a, b; // концы отрезка
     fin >> a >> b;
-    size_t n; // кол-во узлов
-    fin >> n;
 
-    fout << "2 узла:\t"; Gaussian(EPS, 2, a, b, fu1);
-    fout << "3 узла:\t"; Gaussian(EPS, 3, a, b, fu1);
-    fout << "5 узлов:\t"; Gaussian(EPS, 5, a, b, fu1);
+    Gaussian(EPS, 2, a, b, fu1);
+    Gaussian(EPS, 3, a, b, fu1);
+    Gaussian(EPS, 5, a, b, fu1);
+    */
 
     // 3.1
 
@@ -241,7 +241,7 @@ int main()
     method = newt(EPS, a, b, fu2, dfu2);
     fout << "Метод Ньютона\n" << "m = " << method.first << endl << "x = " << method.second << endl << endl;
     */
-    
+
     fin.close();
     fout.close();
     return 0;
