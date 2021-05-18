@@ -33,6 +33,7 @@ public:
 	Polynomial& operator *= (const Polynomial&);
 
 	Polynomial df() const; // производный многочлен
+	Polynomial Df() const; // интеграл от многочлена
 
 	double operator () (const double&) const; // значение полинома в точке
 
@@ -72,5 +73,5 @@ Polynomial Legendre(const size_t&); // построение полинома Л�
 
 pair<size_t, double> dichotomy(const double&, const double&, const double&, double (*)(const double&));
 pair<size_t, double> newt(const double&, const double&, const double&, double (*)(const double&), double (*)(const double&));
-pair<size_t, double> newt(const double&, const double&, const double&, double (*)(const double&), double (*)(const double&), const double&); // версия с начальным приближением
-pair<size_t, double> newt(const double&, const double&, const double&, Polynomial&, Polynomial&, const double&);
+pair<size_t, double> newt(const double&, double (*)(const double&), double (*)(const double&), const double&); // версия с начальным приближением
+pair<size_t, double> newt(const double&, Polynomial&, Polynomial&, const double&);
