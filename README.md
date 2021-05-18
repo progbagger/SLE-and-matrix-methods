@@ -25,5 +25,6 @@
   * `Polynomial Legendre(const size_t&)` - построение полинома Лежандра
 ## Решение нелинейных уравнений
 * `pair<size_t, double> dichotomy(const double&, const double&, const double&, double (*)(const double&))` - метод дихотомии (используйте `dichotomy(...).first` для использования количества итераций и `dichotomy(...).second` для использования результата метода
-* pair<size_t, double> newt(const double&, const double&, const double&, double (*)(const double&), double (*)(const double&)) - метод Ньютона (используйте `newt(...).first` для использования количества итераций и `newt(...).second` для использования результата метода
+* `pair<size_t, double> newt(const double&, const double&, const double&, double (*)(const double&), double (*)(const double&))` - метод Ньютона (используйте `newt(...).first` для использования количества итераций и `newt(...).second` для использования результата метода
   * Также имеются перегруженные версии данной функции, которые принимают начальное приближение и вместо указателей на функции используют в качестве аргументов полиномы
+* `void Gaussian(const double& - точность, const size_t& - количество узлов, const double& - левая граница отрезка, const double& - правая границы отрезка, double (*)(const double&) - функция)` - квадратурная формула Гаусса для вычисления численного интеграла на n узлов
