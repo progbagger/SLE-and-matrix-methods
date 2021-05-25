@@ -457,20 +457,34 @@ void Gaussian(const double& eps, const size_t& n, const double& a, const double&
 	for (size_t i = 0; i < n; i++)
 	{
 		// начальное приближение для i-го корня
-		x[i] = cos((acos(-1) * (4 * i - 1)) / (4 * n + 2));
+		x[i] = cos((acos(-1) * (4 * (i + 1) - 1)) / (4 * n + 2));
 		// поиск самого корня
 		x[i] = newt(eps, L, dL, x[i]).second;
 	}
-	// подсчёт весов квадратурной формулы
-	for (size_t i = 0; i < n; i++)
-		c[i] = 2 / ((1 - x[i] * x[i]) * dL(x[i]) * dL(x[i]));
-	// сама квадратурная формула
-	for (size_t i = 0; i < n; i++)
-		result += c[i] * function((a + b) / 2 + ((b - a) / 2) * x[i]);
-	result *= ((b - a) / 2);
-	Vector y(n, 0); // вектор значений функции в узлах
+	// перерасчёт узлов с отрезка [-1, 1] на нужный отрезок [a, b]
+	if (a != -1 || b != 1)
+		for (size_t i = 0; i < n; i++)
+			x[i] = ((a + b) / 2) + (x[i] * ((b - a) / 2));
+	// подсчёт значений функции в узлах
+	Vector y(n, 0);
 	for (size_t i = 0; i < n; i++)
 		y[i] = function(x[i]);
+	// подсчёт весов квадратурной формулы
+	for (size_t i = 0; i < n; i++) {
+		Polynomial weight(Vector(1, 1));
+		double denominator = 1;
+		for (size_t j = 0; j < n; j++)
+			if (i != j) {
+				weight *= Polynomial(Vector{ -1 * x[j], 1 });
+				denominator *= x[i] - x[j];
+			}
+		weight /= denominator;
+		c[i] = (weight.Df())(b) - (weight.Df())(a);
+	}
+	// сама квадратурная формула
+	for (size_t i = 0; i < n; i++)
+		result += c[i] * function(x[i]);
+	//result *= ((b - a) / 2);
 	fout << "Узлы:\n" << x << "Значения функции в узлах:\n" << y << "Веса квадратурной формулы:\n" << c << "Результат = " << result << endl << endl;
 	fout.close();
 }
