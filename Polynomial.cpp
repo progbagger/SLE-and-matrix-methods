@@ -484,7 +484,6 @@ void Gaussian(const double& eps, const size_t& n, const double& a, const double&
 	// сама квадратурная формула
 	for (size_t i = 0; i < n; i++)
 		result += c[i] * function(x[i]);
-	//result *= ((b - a) / 2);
 	fout << "Узлы:\n" << x << "Значения функции в узлах:\n" << y << "Веса квадратурной формулы:\n" << c << "Результат = " << result << endl << endl;
 	fout.close();
 }
