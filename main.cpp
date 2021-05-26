@@ -242,6 +242,13 @@ int main()
     fout << "Метод Ньютона\n" << "m = " << method.first << endl << "x = " << method.second << endl << endl;
     */
 
+    // 3.2
+
+    /*
+    Polynomial f(Vector{ 0, -1, 0, 1 }), df = f.df();
+    newt(EPS, f, df, 1 / sqrt(5)).second;
+    */
+
     fin.close();
     fout.close();
     return 0;
