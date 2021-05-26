@@ -429,6 +429,7 @@ ret:
 
 pair<size_t, double> newt(const double& eps, Polynomial& function, Polynomial& dfunction, const double& x0)
 {
+	fstream fout("output.txt", ios::app);
 	double result = x0, presult = 0;
 	size_t counter = 0;
 	if (!function(result))
@@ -438,7 +439,27 @@ pair<size_t, double> newt(const double& eps, Polynomial& function, Polynomial& d
 		++counter;
 		presult = result;
 		result = presult - (function(presult) / dfunction(presult));
+		fout << result << endl;
 	} while (abs(result - presult) >= eps);
+ret:
+	pair<size_t, double> ans{ counter, result };
+	return ans;
+}
+
+pair<size_t, double> newt(Polynomial& function, Polynomial& dfunction, const double& x0)
+{
+	fstream fout("output.txt", ios::app);
+	double result = x0, presult = 0;
+	size_t counter = 0;
+	if (!function(result))
+		goto ret;
+	do
+	{
+		++counter;
+		presult = result;
+		result = presult - (function(presult) / dfunction(presult));
+		fout << result << endl;
+	} while (counter != 31);
 ret:
 	pair<size_t, double> ans{ counter, result };
 	return ans;
